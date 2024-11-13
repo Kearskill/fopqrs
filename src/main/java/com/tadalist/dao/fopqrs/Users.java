@@ -1,4 +1,5 @@
 package com.tadalist.dao.fopqrs;
+import java.sql.Date;
 
 public class Users {
     private int UserID;
@@ -6,7 +7,7 @@ public class Users {
     private String UserName;
     private String UserPassword;
     private enum NotificationPreference {EMAIL,SMS,NOTIFICATION};
-    java.util.Date dt = new java.util.Date();
+    java.sql.Date dt = new java.sql.Date(System.currentTimeMillis());
     java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private String LastLogin = sdf.format(dt);
 
