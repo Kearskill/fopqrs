@@ -12,6 +12,9 @@ public class Users {
     java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private String LastLogin = sdf.format(dt);
 
+    // testing for enumset
+
+
     public Users(int UserID, String UserEmail, String UserName, String UserPassword, String LastLogin) {
         this.UserID = UserID;
         this.UserEmail = UserEmail;
