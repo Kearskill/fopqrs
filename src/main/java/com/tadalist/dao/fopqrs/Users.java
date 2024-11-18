@@ -1,5 +1,6 @@
 package com.tadalist.dao.fopqrs;
 import java.sql.Date;
+import java.util.EnumSet;
 
 public class Users {
 //    private final Users.NotificationPreference NotificationPreference;
@@ -15,7 +16,7 @@ public class Users {
     // testing for enumset
 
 
-    public Users(int UserID, String UserEmail, String UserName, String UserPassword, String LastLogin) {
+    public Users(int UserID, String UserEmail, String UserName, String UserPassword, EnumSet.allOf(NotificationPreference.EMAIL.class), String LastLogin) {
         this.UserID = UserID;
         this.UserEmail = UserEmail;
         this.UserName = UserName;
