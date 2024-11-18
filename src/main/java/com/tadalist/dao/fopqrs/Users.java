@@ -2,7 +2,7 @@ package com.tadalist.dao.fopqrs;
 import java.sql.Date;
 
 public class Users {
-    private final Users.NotificationPreference NotificationPreference;
+//    private final Users.NotificationPreference NotificationPreference;
     private int UserID;
     private String UserEmail;
     private String UserName;
@@ -12,12 +12,12 @@ public class Users {
     java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private String LastLogin = sdf.format(dt);
 
-    public Users(int UserID, String UserEmail, String UserName, String UserPassword, NotificationPreference notificationPreference, String LastLogin) {
+    public Users(int UserID, String UserEmail, String UserName, String UserPassword, String LastLogin) {
         this.UserID = UserID;
         this.UserEmail = UserEmail;
         this.UserName = UserName;
         this.UserPassword = UserPassword;
-        this.NotificationPreference = notificationPreference;
+//        this.NotificationPreference = notificationPreference;
         this.LastLogin = LastLogin;
     }
 
@@ -63,6 +63,6 @@ public class Users {
 
     @Override
     public String toString(){
-        return "Users [UserID : " + UserID + ", UserEmail=" + UserEmail + ", UserName=" + UserName +", UserPassword: "+ UserPassword +"]";
+        return "Users [UserID : " + UserID + ", UserEmail=" + UserEmail + ", UserName=" + UserName +", UserPassword: "+ UserPassword +", "+LastLogin+"]";
     }
 }
