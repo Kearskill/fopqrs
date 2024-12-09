@@ -3,25 +3,26 @@ import java.sql.Date;
 import java.util.EnumSet;
 
 public class Users {
-//    private final Users.NotificationPreference NotificationPreference;
+    private final Object NotificationPreference;
+    //    private final Users.NotificationPreference NotificationPreference;
     private int UserID;
     private String UserEmail;
     private String UserName;
     private String UserPassword;
     private enum NotificationPreference {EMAIL,SMS,NOTIFICATION};
-    java.sql.Date dt = new java.sql.Date(System.currentTimeMillis());
+    java.sql.Date dt = new java.sql.Date(System.currentTimeMillis()); //no cap this is hard
     java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private String LastLogin = sdf.format(dt);
 
     // testing for enumset
+//    Class enumTest = NotificationPreference.class;
 
-
-    public Users(int UserID, String UserEmail, String UserName, String UserPassword, EnumSet.allOf(NotificationPreference.EMAIL.class), String LastLogin) {
+    public Users(int UserID, String UserEmail, String UserName, String UserPassword, Class<?> NotificationPreference, String LastLogin) {
         this.UserID = UserID;
         this.UserEmail = UserEmail;
         this.UserName = UserName;
         this.UserPassword = UserPassword;
-//        this.NotificationPreference = notificationPreference;
+        this.NotificationPreference = com.tadalist.dao.fopqrs.Users.NotificationPreference.getEnumConstants();
         this.LastLogin = LastLogin;
     }
 

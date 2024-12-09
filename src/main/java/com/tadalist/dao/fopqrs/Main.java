@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 public class Main {
     public static void main(String[] args) throws SQLException {
-        Users Leith = new Users(10000, "leith@gmail.com", "leith", "password","2024-11-18 2:20:20");
+        Users Leith = new Users(10000, "leith@gmail.com", "leith", "password",EMAIL,"2024-11-18 2:20:20");
         System.out.print(Leith);
 
         Connection con = Database.getConnection();
