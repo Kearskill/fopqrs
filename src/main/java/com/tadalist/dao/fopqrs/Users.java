@@ -4,6 +4,7 @@ package com.tadalist.dao.fopqrs;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.util.List;
 
 public class Users {
     public enum NotificationPreference{
