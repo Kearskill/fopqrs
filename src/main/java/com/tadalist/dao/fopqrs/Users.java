@@ -1,17 +1,23 @@
+//USER MODEL CLASS
+
 package com.tadalist.dao.fopqrs;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 
 public class Users {
+    public enum NotificationPreference{
+        EMAIL, SMS, APPNOTIFICATION
+    }
+
     private int UserID;
     private String UserEmail;
     private String UserName;
     private String UserPassword;
-    private String NotificationPreference;
+    private NotificationPreference NotificationPreference;
     private Timestamp LastLogin;
 
-    public Users(int UserID, String UserEmail, String UserName, String UserPassword, String NotificationPreference, Timestamp LastLogin) {
+    public Users(int UserID, String UserEmail, String UserName, String UserPassword, NotificationPreference NotificationPreference, Timestamp LastLogin) {
         this.UserID = UserID;
         this.UserEmail = UserEmail;
         this.UserName = UserName;
@@ -21,11 +27,12 @@ public class Users {
     }
 
     //Constructor without ID
-    public Users(String UserEmail, String UserName, String UserPassword){
+    public Users(String UserEmail, String UserName, String UserPassword, NotificationPreference NotificationPreference, Timestamp LastLogin){
         this.UserEmail = UserEmail;
         this.UserName = UserName;
         this.UserPassword = UserPassword;
-        this.NotificationPreference = "Email";
+        this.NotificationPreference = NotificationPreference;
+        this.LastLogin = LastLogin;
     }
 
     //UserID
@@ -61,10 +68,10 @@ public class Users {
     }
 
     //Notification Preference
-    public String getNotificationPreference(){
+    public NotificationPreference getNotificationPreference(){
         return NotificationPreference;
     }
-    public void setNotificationPreference(String NotificationPreference){
+    public void setNotificationPreference(NotificationPreference NotificationPreference){
         this.NotificationPreference = NotificationPreference;
     }
 
