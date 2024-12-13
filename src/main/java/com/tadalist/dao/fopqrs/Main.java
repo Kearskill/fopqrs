@@ -19,7 +19,7 @@ public class Main {
             System.out.println("\n===== Task Management System =====");
             System.out.println("1. Add Task");
             System.out.println("2. View All Tasks");
-            System.out.println("3. Update Task");
+            System.out.println("3. Edit Task");
             System.out.println("4. Delete Task");
             System.out.println("5. View Task by ID");
             System.out.println("6. Exit");
@@ -71,12 +71,16 @@ public class Main {
             System.out.print("Priority (LOW, MEDIUM, HIGH): ");
             Tasks.Priority priority = Tasks.Priority.valueOf(scanner.nextLine().toUpperCase());
 
+            System.out.print("Category (HOMEWORK, PERSONAL, WORK): ");
+            Tasks.Category Category = Tasks.Category.valueOf(scanner.nextLine().toUpperCase());
+
             System.out.print("Status (PENDING, IN_PROGRESS, COMPLETED): ");
             Tasks.Status status = Tasks.Status.valueOf(scanner.nextLine().toUpperCase());
 
             Timestamp now = new Timestamp(System.currentTimeMillis());
 
-            Tasks task = new Tasks(0, title, description, dueDate, priority, status, now, now, (short) 0, 0, 0, 0,0);
+            Tasks task = new Tasks(0, title, description, dueDate, priority, status, now, now, (short) 0,
+                    0, 0,Category);
             TaskDAO.addTask(task);
             System.out.println("Task added successfully with ID: " + task.getTaskId());
         } catch (SQLException | IllegalArgumentException e) {
