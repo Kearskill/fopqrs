@@ -59,7 +59,7 @@ public class TaskDAO {
 
     public static void editTask(Tasks Tasks) throws SQLException{
         String sql = "UPDATE tasks SET Title=?, Description=?, DueDate=?, Priority=?, Status=?," +
-                "UpdatedAt=?, IsRecurring=?, ParentTaskID=?, StreakCount=? WHERE TaskId=?";
+                ",CreatedAt=?,UpdatedAt=?, IsRecurring=?, ParentTaskID=?, StreakCount=?, Category=? WHERE TaskId=?";
         try(Connection conn = dbConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS)) {
 
@@ -182,7 +182,26 @@ public class TaskDAO {
         }
         return taskList;
     }
+    //Sort Task
+    public static List<Tasks> getTasksSorted(String sortBy, boolean ascending) throws SQLException{
+        List<String> allowedSortColumns = List.of("DueDate", "Priority", "Category");
+        if (!allowedSortColumns.contains(sortBy)) {
+            throw new IllegalArgumentException("Invalid sorting column: " + sortBy);
+        }
+        List<Tasks> taskList = new ArrayList<>();
+        String order = ascending ? "asc":"desc";
+        String query = "select * from Tasks order by DueDate " + order;
 
+        try(Connection conn = dbConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery()){
+
+            while(rs.next()){
+                taskList.add(mapResultSetToTask(rs));
+            }
+        }
+        return taskList;
+    }
 }
 
 

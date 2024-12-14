@@ -22,7 +22,8 @@ public class Main {
             System.out.println("3. Edit Task");
             System.out.println("4. Delete Task");
             System.out.println("5. View Task by ID");
-            System.out.println("6. Exit");
+            System.out.println("6. Sort Task");
+            System.out.println("7. Exit");
             System.out.print("Enter your choice: ");
 
             int choice = scanner.nextInt();
@@ -45,6 +46,9 @@ public class Main {
                     viewTaskById(scanner);
                     break;
                 case 6:
+                    sortBy(scanner);
+                    break;
+                case 7:
                     System.out.println("Exiting Task Management System. Goodbye!");
                     exit = true;
                     break;
@@ -74,7 +78,7 @@ public class Main {
             System.out.print("Category (HOMEWORK, PERSONAL, WORK): ");
             Tasks.Category Category = Tasks.Category.valueOf(scanner.nextLine().toUpperCase());
 
-            System.out.print("Status (PENDING, IN_PROGRESS, COMPLETED): ");
+            System.out.print("Status (PENDING, COMPLETED): ");
             Tasks.Status status = Tasks.Status.valueOf(scanner.nextLine().toUpperCase());
 
             Timestamp now = new Timestamp(System.currentTimeMillis());
@@ -166,4 +170,50 @@ public class Main {
             System.out.println("Error fetching task: " + e.getMessage());
         }
     }
+
+    //6 : Sort Task
+    private static void sortBy(Scanner scanner){
+        try{
+            System.out.println("===== Task Sorting ====");
+            System.out.println("1. Due Date (Ascending to Descending)");
+            System.out.println("2. Due Date (Descending to Ascending)");
+            System.out.println("3. Priority (High to Low)");
+            System.out.println("4. Priority (Low to High)");
+            String userOption = scanner.nextLine();
+
+            boolean ascending  = switch(userOption) {
+                case "1" -> true;
+                case "2" -> false;
+                case "3" -> true;
+                case "4" -> false;
+                default -> throw new IllegalArgumentException("Invalid option selected!");
+            };
+            String sortByColumn = switch (userOption) {
+                case "1", "2" -> "DueDate";
+                case "3", "4" -> "Priority";
+                default -> throw new IllegalArgumentException("Invalid option selected!");
+            };
+
+            System.out.println("Tasks sorted by " + sortByColumn +
+                    " (" + (ascending ? "Ascending" : "Descending") + "):");
+            List<Tasks> sortedTasks = TaskDAO.getTasksSorted(sortByColumn, ascending);
+
+            for (Tasks task : sortedTasks) {
+                System.out.println(task.getTitle() + " - " + userOption + ": "
+                + getColumnValue(task, userOption));
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private static Object getColumnValue(Tasks task, String sortBy) {
+        return switch (sortBy) {
+            case "DueDate" -> task.getDueDate();
+            case "Priority" -> task.getPriority();
+            case "Category" -> task.getCategory();
+            default -> null;
+        };
+    }
+
 }
