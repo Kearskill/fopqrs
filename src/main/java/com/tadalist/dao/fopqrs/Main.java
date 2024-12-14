@@ -16,7 +16,7 @@ public class Main {
 
         while (!exit) {
             // Display menu options
-            System.out.println("\n===== Task Management System =====");
+            System.out.println("\n===== TaDaList!! - Your Number One To-Do List App =====");
             System.out.println("1. Add Task");
             System.out.println("2. View All Tasks");
             System.out.println("3. Edit Task");
@@ -49,11 +49,11 @@ public class Main {
                     sortBy(scanner);
                     break;
                 case 7:
-                    System.out.println("Exiting Task Management System. Goodbye!");
+                    System.out.println("Exiting TaDaList! Goodbye :((((((((((");
                     exit = true;
                     break;
                 default:
-                    System.out.println("Invalid choice! Please try again.");
+                    System.out.println("Invalid choice idiot!. Try again.");
             }
         }
         scanner.close();
