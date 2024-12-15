@@ -1,22 +1,39 @@
+//USER MODEL CLASS
+
 package com.tadalist.dao.fopqrs;
 import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.util.List;
 
 public class Users {
+    public enum NotificationPreference{
+        EMAIL, SMS, APPNOTIFICATION
+    }
+
     private int UserID;
     private String UserEmail;
     private String UserName;
     private String UserPassword;
-    private enum NotificationPreference {EMAIL,SMS,NOTIFICATION};
-    java.sql.Date dt = new java.sql.Date(System.currentTimeMillis());
-    java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    private String LastLogin = sdf.format(dt);
+    private NotificationPreference NotificationPreference;
+    private Timestamp LastLogin;
 
-    public Users(int UserID, String UserEmail, String UserName, String UserPassword) {
+    public Users(int UserID, String UserEmail, String UserName, String UserPassword, NotificationPreference NotificationPreference, Timestamp LastLogin) {
         this.UserID = UserID;
         this.UserEmail = UserEmail;
         this.UserName = UserName;
         this.UserPassword = UserPassword;
-//        LastLogin = lastLogin;
+        this.NotificationPreference = NotificationPreference;
+        this.LastLogin = LastLogin;
+    }
+
+    //Constructor without ID
+    public Users(String UserEmail, String UserName, String UserPassword, NotificationPreference NotificationPreference, Timestamp LastLogin){
+        this.UserEmail = UserEmail;
+        this.UserName = UserName;
+        this.UserPassword = UserPassword;
+        this.NotificationPreference = NotificationPreference;
+        this.LastLogin = LastLogin;
     }
 
     //UserID
@@ -51,16 +68,24 @@ public class Users {
         this.UserPassword = UserPassword;
     }
 
+    //Notification Preference
+    public NotificationPreference getNotificationPreference(){
+        return NotificationPreference;
+    }
+    public void setNotificationPreference(NotificationPreference NotificationPreference){
+        this.NotificationPreference = NotificationPreference;
+    }
+
     //LastLogin
-    public String getLastLogin (){
+    public Timestamp getLastLogin (){
         return LastLogin;
     }
-    public void setLastLogin(){
+    public void setLastLogin(Timestamp LastLogin){
         this.LastLogin = LastLogin;
     }
 
     @Override
     public String toString(){
-        return "Users [UserID : " + UserID + ", UserEmail=" + UserEmail + ", UserName=" + UserName +", UserPassword: "+ UserPassword +"]";
+        return "Users [UserID : " + UserID + ", UserEmail=" + UserEmail + ", UserName=" + UserName +", UserPassword: "+ UserPassword + ", NotificationPreference: " + NotificationPreference +", LastLogin: "+LastLogin+"]";
     }
 }
