@@ -34,7 +34,20 @@ public class MainLogin {
         }
     }
     private static void loginReq(Scanner sc){
-        System.out.println("Login");
+        System.out.println("---Login---");
+        try{
+            System.out.println("Enter email: ");
+            String email = sc.nextLine();
+
+            System.out.println("Enter password: ");
+            String password = sc.nextLine();
+
+            Users user = new Users(email, password);
+            UsersDAO.loginUser(user);
+        } catch(SQLException | IllegalArgumentException e){
+            System.out.println("Error adding user: " + e.getMessage());
+        }
+
     }
 
     private static void registerReq (Scanner sc){
@@ -58,11 +71,11 @@ public class MainLogin {
                     password = new String(savedPassword);
                     break;
                 }
+                System.out.println("Password doesn't match. Please try again!");
 //                this is for password masking but i failed
 //                char[] savedPassword = console.readPassword("Password: "); // console.readPassword only gets char array
 //                char[] confirmPassword = console.readPassword("Confirm password: ");
 //                if (new String(savedPassword).equals(new String(confirmPassword))){
-                System.out.println("Password doesn't match. Please try again!");
             }
 
             System.out.print("Notification Preference (EMAIL, SMS, APPNOTIFICATION): ");

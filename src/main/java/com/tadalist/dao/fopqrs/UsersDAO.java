@@ -94,4 +94,24 @@ public class UsersDAO{
             stmt.executeUpdate();
         }
     }
+    public static void loginUser(Users users) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM users WHERE email = ? AND userpassword = ?;";
+        try (Connection conn = dbConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            stmt.setString(1, users.getUserEmail());
+            stmt.setString(2, users.getUserPassword());
+
+            ResultSet resultSet = stmt.executeQuery(); // this one should execute the query
+            if (resultSet.next()){
+                int count = resultSet.getInt(1); // check if "email and password matches" number is more than 1
+                if (count>=1){
+//                    return true;
+                    System.out.println("Email and password matches!");
+                } else{
+                    System.out.println("Email and password doesn't match.");
+                }
+            }
+        }
+    }
 }

@@ -36,6 +36,12 @@ public class Users {
         this.LastLogin = LastLogin;
     }
 
+    //Constructor with email and pass
+    public Users(String UserEmail, String UserPassword){
+        this.UserEmail = UserEmail;
+        this.UserPassword = UserPassword;
+    }
+
     //UserID
     public int getUserID(){
         return UserID;
