@@ -31,6 +31,7 @@ public class MainLogin {
                     System.out.println("Unless you have a time machine, that content is not available.");
                     break;
             }
+            sc.close();
         }
     }
     private static void loginReq(Scanner sc){
