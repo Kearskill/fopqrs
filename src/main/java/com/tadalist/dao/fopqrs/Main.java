@@ -2,6 +2,8 @@ package com.tadalist;
 
 import com.tadalist.dao.fopqrs.TaskDAO;
 import com.tadalist.dao.fopqrs.Tasks;
+import com.tadalist.dao.fopqrs.recurringTaskDAO;
+import com.tadalist.dao.fopqrs.recurringTask;
 
 import java.sql.SQLException;
 import java.sql.Date;
@@ -23,7 +25,8 @@ public class Main {
             System.out.println("4. Delete Task");
             System.out.println("5. View Task by ID");
             System.out.println("6. Sort Task");
-            System.out.println("7. Exit");
+            System.out.println("7. Manage Recurring Task");
+            System.out.println("8. Exit");
             System.out.print("Enter your choice: ");
 
             int choice = scanner.nextInt();
@@ -49,6 +52,9 @@ public class Main {
                     sortBy(scanner);
                     break;
                 case 7:
+                    recurringTaskMenu(scanner);
+                    break;
+                case 8:
                     System.out.println("Exiting TaDaList! Goodbye :((((((((((");
                     exit = true;
                     break;
@@ -215,5 +221,77 @@ public class Main {
             default -> null;
         };
     }
+
+
+    private static void recurringTaskMenu(Scanner scanner){
+        boolean exit = false;
+        while(!exit){
+            System.out.println("\n===== Recurring Task Management =====");
+            System.out.println("1. Add Recurring Task (Remember your task id)");
+            System.out.println("2. Delete Recurring Tasks");
+            System.out.println("3. Back to Main Menu");
+            System.out.print("Enter your choice: ");
+            String choice = scanner.nextLine();
+
+            switch(choice){
+                case "1":
+                    addRecurringTask(scanner);
+                    break;
+                case "2":
+                    deleteRecurringTask(scanner);
+                    break;
+                case "3":
+                    System.out.println("Going back");
+                    exit = true;
+                    break;
+                default:
+                    System.out.println("Invalid Choice");
+            }
+        }
+
+    }
+    private static void addRecurringTask(Scanner scanner) {
+        try {
+            System.out.println("Enter recurring task details:");
+
+            System.out.print("Task ID: ");
+            int taskId = Integer.parseInt(scanner.nextLine());
+
+            System.out.print("Recurrence Type (DAILY, WEEKLY, MONTHLY): ");
+            recurringTask.recurrenceType recurrenceType =
+                    recurringTask.recurrenceType.valueOf(scanner.nextLine().toUpperCase());
+
+            System.out.print("Next Due Date (yyyy-mm-dd): ");
+            Date nextDueDate = Date.valueOf(scanner.nextLine());
+
+            System.out.print("Recurrence End Date (yyyy-mm-dd): ");
+            Date recurrenceEnd = Date.valueOf(scanner.nextLine());
+
+            System.out.print("Frequency (e.g., 1 for daily, 7 for weekly): ");
+            int frequency = Integer.parseInt(scanner.nextLine());
+
+            System.out.print("Reminder Date (yyyy-mm-dd): ");
+            Date reminder = Date.valueOf(scanner.nextLine());
+
+            recurringTask task = new recurringTask(0, taskId, recurrenceType, nextDueDate, recurrenceEnd, frequency, reminder);
+            recurringTaskDAO.addRecurringTask(task);
+
+            System.out.println("Recurring task successfully added!");
+        } catch (Exception e) {
+            System.out.println("Error adding recurring task: " + e.getMessage());
+        }
+    }
+    //delete recurring task
+    private static void deleteRecurringTask(Scanner scanner) {
+        try {
+            System.out.print("Enter Task ID to delete: ");
+            int taskId = scanner.nextInt();
+            recurringTaskDAO.deleteRecurringTask(taskId);
+            System.out.println("Recurring Task deleted successfully!");
+        } catch (SQLException e) {
+            System.out.println("Error deleting task: " + e.getMessage());
+        }
+    }
+
 
 }

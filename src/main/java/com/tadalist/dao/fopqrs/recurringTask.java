@@ -1,29 +1,43 @@
 package com.tadalist.dao.fopqrs;
-
-
 import java.sql.Date;
 
 public class recurringTask {
-    enum recurrenceType{
-        DAILY,WEEKLY,MONTHLY
-    }
+    public enum recurrenceType {DAILY, WEEKLY, MONTHLY};
 
-    private int TaskID;
-    private int recurringID;
     private recurrenceType recurrenceType;
+    private int RecurringID;
+    private int TaskID;
     private Date NextDueDate;
-    private Date recurrenceEnd;
-    private int recurrenceFrequency;
+    private Date RecurrenceEnd;
+    private int RecurrenceFrequency;
+    private Date Reminder;
 
-    public recurringTask(int recurringID,int taskID,recurrenceType recurrenceType,
-                         Date NextDueDate,Date recurrenceEnd,int recurrenceFrequency){
-        this.recurringID = recurringID;
+
+    public recurringTask(int recurringID, int taskID, recurrenceType recurrenceType, Date nextDueDate, Date recurrenceEnd,
+                         int recurrenceFrequency, Date reminder) {
+        this.RecurringID = recurringID;
         this.TaskID = taskID;
         this.recurrenceType = recurrenceType;
-        this.NextDueDate = NextDueDate;
-        this.recurrenceEnd = recurrenceEnd;
-        this.recurrenceFrequency = recurrenceFrequency;
+        this.NextDueDate = nextDueDate;
+        this.RecurrenceEnd = recurrenceEnd;
+        this.RecurrenceFrequency = recurrenceFrequency;
+        this.Reminder = reminder;
+    }
 
+
+    public recurrenceType getRecurrenceType(){
+        return recurrenceType;
+    }
+
+    public void setRecurrenceType(recurrenceType recurrenceType){
+        this.recurrenceType = recurrenceType;
+    }
+    public int getRecurringID() {
+        return RecurringID;
+    }
+
+    public void setRecurringID(int recurringID) {
+        RecurringID = recurringID;
     }
 
     public int getTaskID() {
@@ -32,22 +46,6 @@ public class recurringTask {
 
     public void setTaskID(int taskID) {
         TaskID = taskID;
-    }
-
-    public int getRecurringID() {
-        return recurringID;
-    }
-
-    public void setRecurringID(int recurringID) {
-        this.recurringID = recurringID;
-    }
-
-    public recurringTask.recurrenceType getRecurrenceType() {
-        return recurrenceType;
-    }
-
-    public void setRecurrenceType(recurringTask.recurrenceType recurrenceType) {
-        this.recurrenceType = recurrenceType;
     }
 
     public Date getNextDueDate() {
@@ -59,18 +57,38 @@ public class recurringTask {
     }
 
     public Date getRecurrenceEnd() {
-        return recurrenceEnd;
+        return RecurrenceEnd;
     }
 
     public void setRecurrenceEnd(Date recurrenceEnd) {
-        this.recurrenceEnd = recurrenceEnd;
+        RecurrenceEnd = recurrenceEnd;
     }
 
     public int getRecurrenceFrequency() {
-        return recurrenceFrequency;
+        return RecurrenceFrequency;
     }
 
     public void setRecurrenceFrequency(int recurrenceFrequency) {
-        this.recurrenceFrequency = recurrenceFrequency;
+        RecurrenceFrequency = recurrenceFrequency;
+    }
+
+    public Date getReminder() {
+        return Reminder;
+    }
+
+    public void setReminder(Date reminder) {
+        Reminder = reminder;
+    }
+
+    @Override
+    public String toString() {
+        return "recurringtask{" +
+                "RecurringID=" + RecurringID +
+                ", TaskID=" + TaskID +
+                ", NextDueDate=" + NextDueDate +
+                ", RecurrenceEnd=" + RecurrenceEnd +
+                ", RecurrenceFrequency=" + RecurrenceFrequency +
+                ", Reminder=" + Reminder +
+                '}';
     }
 }

@@ -11,7 +11,7 @@ public class recurringTaskDAO {
     public static void addRecurringTask(recurringTask recurringTask) throws SQLException{
         String validateTask = "select TaskID from Tasks where TaskID = ?";
         String sql = "insert into recurringtask (TaskID,RecurrenceType,NextDueDate," +
-                "RecurrenceeEnd,RecurrenceFrequency) values (?,?,?,?,?)";
+                "RecurrenceeEnd,RecurrenceFrequency,Reminder) values (?,?,?,?,?,?)";
 
         try (Connection conn = dbConnection.getConnection()) {
             // Validate TaskID
@@ -32,7 +32,7 @@ public class recurringTaskDAO {
             stmt.setDate(3, recurringTask.getNextDueDate());
             stmt.setDate(4, recurringTask.getRecurrenceEnd());
             stmt.setInt(5, recurringTask.getRecurrenceFrequency());
-
+            stmt.setDate(6,recurringTask.getReminder());
             stmt.executeUpdate();
 
             try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
@@ -60,14 +60,15 @@ public class recurringTaskDAO {
                 recurringTask.recurrenceType.valueOf(rs.getString("RecurrenceType")),
                 rs.getDate("NextDueDate"),
                 rs.getDate("RecurrenceEnd"),
-                rs.getInt("RecurrenceFrequency")
+                rs.getInt("RecurrenceFrequency"),
+                rs.getDate("Reminder")
         );
     }
 
 
     public static void updateRecurringTask(recurringTask recurringTask) throws SQLException {
         String sql = "UPDATE recurringtask SET TaskID = ?, RecurrenceType = ?, NextDueDate = ?, " +
-                "RecurrenceEnd = ?, RecurrenceFrequency = ? WHERE RecurringID = ?";
+                "RecurrenceEnd = ?, RecurrenceFrequency = ?, Reminder = ? WHERE RecurringID = ?";
 
         try (Connection conn = dbConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -77,7 +78,8 @@ public class recurringTaskDAO {
             stmt.setDate(3, recurringTask.getNextDueDate());
             stmt.setDate(4, recurringTask.getRecurrenceEnd());
             stmt.setInt(5, recurringTask.getRecurrenceFrequency());
-            stmt.setInt(6, recurringTask.getRecurringID());
+            stmt.setDate(6,recurringTask.getReminder());
+            stmt.setInt(7, recurringTask.getRecurringID());
 
             stmt.executeUpdate();
         }
@@ -86,7 +88,7 @@ public class recurringTaskDAO {
     public static List<Map<String, Object>> getRecurringTasksWithDetails() throws SQLException {
         List<Map<String, Object>> resultList = new ArrayList<>();
         String sql = "SELECT rt.RecurringID, t.TaskID, t.Title, t.Description, rt.RecurrenceType, " +
-                "rt.NextDueDate, rt.RecurrenceEnd, rt.RecurrenceFrequency " +
+                "rt.NextDueDate, rt.RecurrenceEnd, rt.RecurrenceFrequency, rt.reminder " +
                 "FROM recurringtask rt " +
                 "JOIN tasks t ON rt.TaskID = t.TaskID";
 
@@ -104,10 +106,29 @@ public class recurringTaskDAO {
                 row.put("NextDueDate", rs.getDate("NextDueDate"));
                 row.put("RecurrenceEnd", rs.getDate("RecurrenceEnd"));
                 row.put("RecurrenceFrequency", rs.getInt("RecurrenceFrequency"));
+                row.put("Reminder", rs.getDate("Reminder"));
+
                 resultList.add(row);
             }
         }
         return resultList;
+    }
+
+    public static recurringTask getRecurringTaskById(int recurringID) throws SQLException {
+        String sql = "SELECT * FROM recurringtask WHERE RecurringID = ?";
+
+        try (Connection conn = dbConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, recurringID);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapResultSetToRecurringTask(rs);
+                }
+            }
+        }
+        return null;
     }
 
 }
