@@ -227,9 +227,10 @@ public class Main {
         boolean exit = false;
         while(!exit){
             System.out.println("\n===== Recurring Task Management =====");
-            System.out.println("1. Add Recurring Task (Remember your task id)");
+            System.out.println("1. Add Recurring Task");
             System.out.println("2. Delete Recurring Tasks");
-            System.out.println("3. Back to Main Menu");
+            System.out.println("3. Edit Recurring Task");
+            System.out.println("4. Back to Main Menu");
             System.out.print("Enter your choice: ");
             String choice = scanner.nextLine();
 
@@ -241,6 +242,9 @@ public class Main {
                     deleteRecurringTask(scanner);
                     break;
                 case "3":
+                    editRecurringTask(scanner);
+                    break;
+                case "4":
                     System.out.println("Going back");
                     exit = true;
                     break;
@@ -252,31 +256,20 @@ public class Main {
     }
     private static void addRecurringTask(Scanner scanner) {
         try {
-            System.out.println("Enter recurring task details:");
-
-            System.out.print("Task ID: ");
-            int taskId = Integer.parseInt(scanner.nextLine());
+            System.out.println("=== Add a Recurring Task ===");
+            System.out.println("Enter Task Title:");
+            String title = scanner.nextLine();
+            System.out.print("Enter Task Description: ");
+            String description =  scanner.nextLine();
 
             System.out.print("Recurrence Type (DAILY, WEEKLY, MONTHLY): ");
             recurringTask.recurrenceType recurrenceType =
                     recurringTask.recurrenceType.valueOf(scanner.nextLine().toUpperCase());
 
-            System.out.print("Next Due Date (yyyy-mm-dd): ");
-            Date nextDueDate = Date.valueOf(scanner.nextLine());
-
-            System.out.print("Recurrence End Date (yyyy-mm-dd): ");
-            Date recurrenceEnd = Date.valueOf(scanner.nextLine());
-
-            System.out.print("Frequency (e.g., 1 for daily, 7 for weekly): ");
-            int frequency = Integer.parseInt(scanner.nextLine());
-
-            System.out.print("Reminder Date (yyyy-mm-dd): ");
-            Date reminder = Date.valueOf(scanner.nextLine());
-
-            recurringTask task = new recurringTask(0, taskId, recurrenceType, nextDueDate, recurrenceEnd, frequency, reminder);
+            recurringTask task = new recurringTask(title, description, recurrenceType);
             recurringTaskDAO.addRecurringTask(task);
 
-            System.out.println("Recurring task successfully added!");
+            System.out.println("Recurring task successfully added with Task ID of " + recurringTask.getRecurringID());
         } catch (Exception e) {
             System.out.println("Error adding recurring task: " + e.getMessage());
         }
@@ -285,10 +278,20 @@ public class Main {
     private static void deleteRecurringTask(Scanner scanner) {
         try {
             System.out.print("Enter Task ID to delete: ");
-            int taskId = scanner.nextInt();
-            recurringTaskDAO.deleteRecurringTask(taskId);
+            int recurringID = scanner.nextInt();
+            recurringTaskDAO.deleteRecurringTask(recurringID);
             System.out.println("Recurring Task deleted successfully!");
         } catch (SQLException e) {
+            System.out.println("Error deleting task: " + e.getMessage());
+        }
+    }
+
+    private static void editRecurringTask(Scanner scanner){
+        try{
+            System.out.println("Enter Task ID to edit: ");
+            int recurringID = scanner.nextInt();
+            recurringTaskDAO.updateRecurringTask(recurringID);
+        }catch (SQLException e) {
             System.out.println("Error deleting task: " + e.getMessage());
         }
     }

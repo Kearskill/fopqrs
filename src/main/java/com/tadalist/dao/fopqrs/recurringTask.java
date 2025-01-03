@@ -7,21 +7,15 @@ public class recurringTask {
     private recurrenceType recurrenceType;
     private int RecurringID;
     private int TaskID;
-    private Date NextDueDate;
-    private Date RecurrenceEnd;
-    private int RecurrenceFrequency;
-    private Date Reminder;
+    private String title;
+    private String description;
 
 
-    public recurringTask(int recurringID, int taskID, recurrenceType recurrenceType, Date nextDueDate, Date recurrenceEnd,
-                         int recurrenceFrequency, Date reminder) {
+    public recurringTask(int recurringID, String title,String description, recurrenceType recurrenceType) {
         this.RecurringID = recurringID;
-        this.TaskID = taskID;
+        this.title = title;
+        this.description = description;
         this.recurrenceType = recurrenceType;
-        this.NextDueDate = nextDueDate;
-        this.RecurrenceEnd = recurrenceEnd;
-        this.RecurrenceFrequency = recurrenceFrequency;
-        this.Reminder = reminder;
     }
 
 
@@ -40,55 +34,30 @@ public class recurringTask {
         RecurringID = recurringID;
     }
 
-    public int getTaskID() {
-        return TaskID;
+    public String getTitle() {
+        return title;
     }
 
-    public void setTaskID(int taskID) {
-        TaskID = taskID;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public Date getNextDueDate() {
-        return NextDueDate;
+    public String getDescription() {
+        return description;
     }
 
-    public void setNextDueDate(Date nextDueDate) {
-        NextDueDate = nextDueDate;
-    }
-
-    public Date getRecurrenceEnd() {
-        return RecurrenceEnd;
-    }
-
-    public void setRecurrenceEnd(Date recurrenceEnd) {
-        RecurrenceEnd = recurrenceEnd;
-    }
-
-    public int getRecurrenceFrequency() {
-        return RecurrenceFrequency;
-    }
-
-    public void setRecurrenceFrequency(int recurrenceFrequency) {
-        RecurrenceFrequency = recurrenceFrequency;
-    }
-
-    public Date getReminder() {
-        return Reminder;
-    }
-
-    public void setReminder(Date reminder) {
-        Reminder = reminder;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override
     public String toString() {
-        return "recurringtask{" +
-                "RecurringID=" + RecurringID +
+        return "recurringTask{" +
+                "recurrenceType=" + recurrenceType +
+                ", RecurringID=" + RecurringID +
                 ", TaskID=" + TaskID +
-                ", NextDueDate=" + NextDueDate +
-                ", RecurrenceEnd=" + RecurrenceEnd +
-                ", RecurrenceFrequency=" + RecurrenceFrequency +
-                ", Reminder=" + Reminder +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
                 '}';
     }
 }
