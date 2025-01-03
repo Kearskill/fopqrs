@@ -25,8 +25,11 @@ public class Main {
             System.out.println("4. Delete Task");
             System.out.println("5. View Task by ID");
             System.out.println("6. Sort Task");
-            System.out.println("7. Manage Recurring Task");
-            System.out.println("8. Exit");
+            System.out.println("7. Search Task");
+            System.out.println("8. Manage Recurring Task");
+            System.out.println("9. Add Task Dependency");
+            System.out.println("10. Mark Task As Complete");
+            System.out.println("11. Exit");
             System.out.print("Enter your choice: ");
 
             int choice = scanner.nextInt();
@@ -52,9 +55,22 @@ public class Main {
                     sortBy(scanner);
                     break;
                 case 7:
-                    recurringTaskMenu(scanner);
+                    //search
+                    searchTasksByKeyword(scanner);
                     break;
                 case 8:
+                    recurringTaskMenu(scanner);
+                    break;
+                case 9:
+                    //taskdependency
+                    recurringTaskMenu(scanner);
+                    break;
+                case 10:
+                    //Mark Task
+                    System.out.println("Exiting TaDaList! Goodbye :((((((((((");
+                    exit = true;
+                    break;
+                case 11:
                     System.out.println("Exiting TaDaList! Goodbye :((((((((((");
                     exit = true;
                     break;
@@ -222,7 +238,37 @@ public class Main {
         };
     }
 
+    // Option 7: Search Tasks by Keyword
+    private static void searchTasksByKeyword(Scanner scanner) {
+        try {
+            System.out.println("Enter a keyword to search by title or description:");
+            String keyword = scanner.nextLine();
 
+            List<Tasks> tasks = TaskDAO.searchTasksByKeyword(keyword);
+
+            if (tasks.isEmpty()) {
+                System.out.println("\nNo tasks found for the keyword: " + keyword);
+            } else {
+                System.out.println("\n===== Search Results =====");
+                for (Tasks task : tasks) {
+                    String status = task.getStatus() == Tasks.Status.PENDING ? "[INCOMPLETE]" : "[COMPLETED]";
+                    System.out.printf(
+                            "%d. %s %s - Due: %s - Category: %s - Priority: %s\n",
+                            task.getTaskId(),
+                            status,
+                            task.getTitle(),
+                            task.getDueDate(),
+                            task.getCategory().toString().toLowerCase(),
+                            task.getPriority().toString().toLowerCase()
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching tasks: " + e.getMessage());
+        }
+    }
+
+    //Option 8: Manage Recurring Task
     private static void recurringTaskMenu(Scanner scanner){
         boolean exit = false;
         while(!exit){
@@ -230,6 +276,7 @@ public class Main {
             System.out.println("1. Add Recurring Task");
             System.out.println("2. Delete Recurring Tasks");
             System.out.println("3. Edit Recurring Task");
+            System.out.println("4. View recurring Task");
             System.out.println("4. Back to Main Menu");
             System.out.print("Enter your choice: ");
             String choice = scanner.nextLine();
@@ -266,10 +313,10 @@ public class Main {
             recurringTask.recurrenceType recurrenceType =
                     recurringTask.recurrenceType.valueOf(scanner.nextLine().toUpperCase());
 
-            recurringTask task = new recurringTask(title, description, recurrenceType);
+            recurringTask task = new recurringTask(0,title, description, recurrenceType);
             recurringTaskDAO.addRecurringTask(task);
 
-            System.out.println("Recurring task successfully added with Task ID of " + recurringTask.getRecurringID());
+            System.out.println("Recurring task successfully added with Task ID of " + task.getRecurringID());
         } catch (Exception e) {
             System.out.println("Error adding recurring task: " + e.getMessage());
         }
@@ -290,7 +337,24 @@ public class Main {
         try{
             System.out.println("Enter Task ID to edit: ");
             int recurringID = scanner.nextInt();
-            recurringTaskDAO.updateRecurringTask(recurringID);
+            scanner.nextLine();
+
+            recurringTask edit = recurringTaskDAO.getRecurringTaskById(recurringID);
+            System.out.println("Enter new title: ");
+            String title = scanner.nextLine();
+            System.out.println("Enter Description: ");
+            String description = scanner.nextLine();
+            System.out.print("Recurrence Type (DAILY, WEEKLY, MONTHLY): ");
+            recurringTask.recurrenceType recurrenceType =
+                    recurringTask.recurrenceType.valueOf(scanner.nextLine().toUpperCase());
+
+
+
+            edit.setTitle(title);
+            edit.setDescription(description);
+            edit.setRecurrenceType(recurrenceType);
+
+            recurringTaskDAO.updateRecurringTask(edit);
         }catch (SQLException e) {
             System.out.println("Error deleting task: " + e.getMessage());
         }

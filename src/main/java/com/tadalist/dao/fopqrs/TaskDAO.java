@@ -93,6 +93,36 @@ public class TaskDAO {
             stmt.executeUpdate();
         }
     }
+    public static List<Tasks> searchTasksByKeyword(String keyword) throws SQLException {
+        List<Tasks> tasks = new ArrayList<>();
+        String query = "SELECT * FROM tasks WHERE title LIKE ? OR description LIKE ?";
+        try (Connection conn = dbConnection.getConnection();PreparedStatement stmt = conn.prepareStatement(query)) {
+            String keywordPattern = "%" + keyword + "%";
+            stmt.setString(1, keywordPattern);
+            stmt.setString(2, keywordPattern);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                tasks.add(mapRowToTask(rs));
+            }
+        }
+        return tasks;
+    }
+    private static Tasks mapRowToTask(ResultSet rs) throws SQLException {
+        return new Tasks(
+                rs.getInt("TaskID"),
+                rs.getString("Title"),
+                rs.getString("Description"),
+                rs.getDate("DueDate"),
+                Tasks.Priority.valueOf(rs.getString("Priority").toUpperCase()),
+                Tasks.Status.valueOf(rs.getString("Status").toUpperCase()),
+                rs.getTimestamp("CreatedAt"),
+                rs.getTimestamp("UpdatedAt"),
+                rs.getShort("IsRecurring"),
+                rs.getInt("ParentTaskID"),
+                rs.getInt("StreakCount"),
+                Tasks.Category.valueOf(rs.getString("Category").toUpperCase())
+        );
+    }
 
     private static Tasks mapResultSetToTask(ResultSet rs) throws SQLException {
         return new Tasks(
