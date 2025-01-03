@@ -5,9 +5,9 @@ import java.sql.DriverManager;
 
 public class TestConnection {
     public static void main(String[] args) {
-        String url = "jdbc:mysql://localhost:3306/tadalist_db"; // Replace with your database URL
-        String user = "root"; // Your MySQL username
-        String password = "localroot"; // Your MySQL password
+        String url = "jdbc:mysql://localhost:3306/realtadalist_db"; // replace according to schema
+        String user = "root";
+        String password = "localroot";
 
         try {
             // Load MySQL JDBC Driver

@@ -11,8 +11,12 @@ public class Tasks {
     }
 
     public enum Status{
-        PENDING,IN_PROGRESS,COMPLETED // enum cannot have spaces
+        PENDING,COMPLETED // enum cannot have spaces
     }
+
+    public enum Category{HOMEWORK,PERSONAL,WORK}
+
+    private Category Category;
     private int TaskId;
     private String Title;
     private String Description;
@@ -24,14 +28,12 @@ public class Tasks {
     private short IsRecurring;//boolean
     private int ParentTaskID;
     private int StreakCount;
-    private int CreatedByUser;
-    private int AssignedToUser;
 
 
     //Add Task ID later on
-    public Tasks(int TaskId,String Title,String Description,Date DueDate,Priority priority,Status status,Timestamp CreatedAt,
-                 Timestamp UpdatedAt,short IsRecurring,int ParentTaskID,int StreakCount,
-                 int CreatedByUser,int AssignedToUser){
+    public Tasks(int TaskId,String Title,String Description,Date DueDate,Priority priority,Status status,
+                 Timestamp CreatedAt, Timestamp UpdatedAt,short IsRecurring,
+                 int ParentTaskID,int StreakCount, Category Category){
         this.TaskId = TaskId;
         this.Title = Title;
         this.Description = Description;
@@ -41,10 +43,17 @@ public class Tasks {
         this.IsRecurring = IsRecurring;
         this.ParentTaskID = ParentTaskID;
         this.StreakCount = StreakCount;
-        this.CreatedByUser = CreatedByUser;
-        this.AssignedToUser = AssignedToUser;
         this.status = status;
         this.priority = priority;
+        this.Category = Category;
+    }
+
+    public Tasks.Category getCategory() {
+        return Category;
+    }
+
+    public void setCategory(Tasks.Category category) {
+        Category = category;
     }
 
     //getters
@@ -93,13 +102,6 @@ public class Tasks {
         return StreakCount;
     }
 
-    public int getCreatedByUser() {
-        return CreatedByUser;
-    }
-
-    public int getAssignedToUser() {
-        return AssignedToUser;
-    }
 
     public Status getStatus() {
         return status;
@@ -142,13 +144,6 @@ public class Tasks {
         StreakCount = streakCount;
     }
 
-    public void setCreatedByUser(int createdByUser) {
-        CreatedByUser = createdByUser;
-    }
-
-    public void setAssignedToUser(int assignedToUser) {
-        AssignedToUser = assignedToUser;
-    }
 
     @Override
     public String toString() {
@@ -162,8 +157,6 @@ public class Tasks {
                 ", IsRecurring=" + IsRecurring +
                 ", ParentTaskID=" + ParentTaskID +
                 ", StreakCount=" + StreakCount +
-                ", CreatedByUser=" + CreatedByUser +
-                ", AssignedToUser=" + AssignedToUser +
                 ", Priority='" + priority + '\'' +
                 ", status='" + status + '\'' +
                 '}';

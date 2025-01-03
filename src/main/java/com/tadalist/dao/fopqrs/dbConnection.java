@@ -8,9 +8,9 @@ import java.sql.DriverManager;
 //Connection conn = dbConnection.getConnection()
 public class dbConnection {
     // Connect to Database
-    public static String url = "jdbc:mysql://localhost:3306/tadalist_db"; //change abd to whichever schema youre using
+    public static String url = "jdbc:mysql://localhost:3306/realtadalist_db"; //change abd to whichever schema youre using
     public static String user = "root";
-    public static String password = "localpassword";
+    public static String password = "localroot";
 
     public static Connection getConnection() throws SQLException{
         try{
