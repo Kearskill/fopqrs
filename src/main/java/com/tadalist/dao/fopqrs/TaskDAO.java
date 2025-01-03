@@ -59,7 +59,7 @@ public class TaskDAO {
 
     public static void editTask(Tasks Tasks) throws SQLException{
         String sql = "UPDATE tasks SET Title=?, Description=?, DueDate=?, Priority=?, Status=?," +
-                ",CreatedAt=?,UpdatedAt=?, IsRecurring=?, ParentTaskID=?, StreakCount=?, Category=? WHERE TaskId=?";
+                "CreatedAt=?,UpdatedAt=?, IsRecurring=?, ParentTaskID=?, StreakCount=?, Category=? WHERE TaskId=?";
         try(Connection conn = dbConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS)) {
 

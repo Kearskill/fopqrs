@@ -4,13 +4,16 @@ import com.tadalist.dao.fopqrs.TaskDAO;
 import com.tadalist.dao.fopqrs.Tasks;
 import com.tadalist.dao.fopqrs.recurringTaskDAO;
 import com.tadalist.dao.fopqrs.recurringTask;
+import com.tadalist.dao.fopqrs.TaskDependency;
+import com.tadalist.dao.fopqrs.TaskDependencyDAO;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Scanner;
-
+import java.sql.*;
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -63,12 +66,11 @@ public class Main {
                     break;
                 case 9:
                     //taskdependency
-                    recurringTaskMenu(scanner);
+                    addTaskDependency(scanner);
                     break;
                 case 10:
                     //Mark Task
-                    System.out.println("Exiting TaDaList! Goodbye :((((((((((");
-                    exit = true;
+                    markTaskAsComplete(scanner);
                     break;
                 case 11:
                     System.out.println("Exiting TaDaList! Goodbye :((((((((((");
@@ -276,7 +278,6 @@ public class Main {
             System.out.println("1. Add Recurring Task");
             System.out.println("2. Delete Recurring Tasks");
             System.out.println("3. Edit Recurring Task");
-            System.out.println("4. View recurring Task");
             System.out.println("4. Back to Main Menu");
             System.out.print("Enter your choice: ");
             String choice = scanner.nextLine();
@@ -359,6 +360,64 @@ public class Main {
             System.out.println("Error deleting task: " + e.getMessage());
         }
     }
+    // Option 9: Add Task Dependency
+    private static void addTaskDependency(Scanner scanner) {
+        try {
+            System.out.print("Enter task number: ");
+            int taskId = scanner.nextInt();
 
+            System.out.print("Enter the task number it depends on: ");
+            int dependentTaskId = scanner.nextInt();
 
+            TaskDependency dependency = new TaskDependency(0, taskId, dependentTaskId);
+            TaskDependencyDAO taskDependencyDAO = new TaskDependencyDAO(getConnection());
+            taskDependencyDAO.addTaskDependency(dependency);
+
+            System.out.println("Task " + taskId + " now depends on task " + dependentTaskId);
+        } catch (SQLException e) {
+            System.out.println("Error adding task dependency: " + e.getMessage());
+        }
+    }
+
+    // Option 10: Mark Task as Complete
+    private static void markTaskAsComplete(Scanner scanner) {
+        try {
+            System.out.print("Enter the task number you want to mark as complete: ");
+            int taskId = scanner.nextInt();
+
+            TaskDependencyDAO dependencyDAO = new TaskDependencyDAO(getConnection());
+            List<TaskDependency> dependencies = dependencyDAO.getTaskDependenciesByTaskId(taskId);
+
+            for (TaskDependency dependency : dependencies) {
+                int dependentTaskId = dependency.getDependentTaskId();
+                Tasks dependentTask = TaskDAO.getTaskById(dependentTaskId);
+                if (dependentTask != null && dependentTask.getStatus() == Tasks.Status.PENDING) {
+                    System.out.println("Cannot mark as complete. Complete dependent task first: " + dependentTaskId);
+                    return;
+                }
+            }
+
+            Tasks task = TaskDAO.getTaskById(taskId);
+            if (task != null) {
+                task.setStatus(Tasks.Status.COMPLETED);
+                TaskDAO.editTask(task);
+                System.out.println("Task marked as complete!");
+            } else {
+                System.out.println("Task not found.");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error marking task as complete: " + e.getMessage());
+        }
+    }
+
+    // Get connection method for TaskDependencyDAO
+    private static Connection getConnection() throws SQLException {
+        String url = "jdbc:mysql://localhost:3306/realtadalist_db";
+        String username = "root";
+        String password = "localroot";
+        return DriverManager.getConnection(url, username, password);
+    }
 }
+
+
+
