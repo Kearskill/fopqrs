@@ -74,13 +74,8 @@ public class TaskDAO {
             stmt.setInt(9,Tasks.getParentTaskID());
             stmt.setInt(10,Tasks.getStreakCount());
             stmt.setString(11,Tasks.getCategory().name());
-
+            stmt.setInt(12, Tasks.getTaskId());
             stmt.executeUpdate();
-            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    Tasks.setTaskId(generatedKeys.getInt(1));
-                }
-            }
 
         }
     }
