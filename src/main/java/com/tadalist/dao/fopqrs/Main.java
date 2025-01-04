@@ -205,6 +205,7 @@ public class Main {
             System.out.println("4. Priority (Low to High)");
             String userOption = scanner.nextLine();
 
+            //advance switch case
             boolean ascending  = switch(userOption) {
                 case "1" -> true;
                 case "2" -> false;
