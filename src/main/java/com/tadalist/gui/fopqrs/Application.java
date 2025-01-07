@@ -11,6 +11,7 @@ public class Application {
     private static JPanel mainPanel;  // This panel will hold other panels (pages)
 
     public static void main(String[] args) {
+        JFrame frame = new JFrame("TaDaList"); //title
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
