@@ -35,6 +35,8 @@ public class Application {
 
         //panel with button
         JPanel panel = new JPanel();
+
+
         JButton button = new JButton("Press me");
         JButton addTask = new JButton("Add New Tasks");
         JButton viewAllTasks = new JButton("View All Tasks");
@@ -70,6 +72,13 @@ public class Application {
                 JOptionPane.showMessageDialog(frame, "Button Clicked!");
             }
         });
+
+        // Set button font and colors
+        button.setFont(new Font("Arial", Font.BOLD, 16));
+        button.setForeground(Color.WHITE);
+        button.setBackground(new Color(76, 175, 80)); // Green color
+        button.setFocusPainted(false); // Remove focus border
+        button.setBorder(BorderFactory.createRaisedBevelBorder()); // Add button border
 
         //Create another panel with text
         JPanel textPanel = new JPanel();
