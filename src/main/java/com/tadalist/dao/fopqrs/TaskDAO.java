@@ -3,6 +3,7 @@ package com.tadalist.dao.fopqrs;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
 //PreparedStatement -> for inserting values in database
 public class TaskDAO {
     public static void addTask(Tasks Tasks) throws SQLException {
