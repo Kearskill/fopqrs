@@ -1,9 +1,16 @@
 package com.tadalist.gui.fopqrs;
 
+import com.tadalist.dao.fopqrs.TaskDAO;
+import com.tadalist.dao.fopqrs.Tasks;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Date;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.HashMap;
 
 public class AddTask extends JPanel implements ActionListener {
     private Container c;
@@ -12,9 +19,8 @@ public class AddTask extends JPanel implements ActionListener {
     private JRadioButton low, medium, high, homework, personal, work, pending, completed;
     private ButtonGroup groupButtonPriority, groupButtonCategory, groupButtonStatus;
     private JComboBox date, month, year;
-    private JTextArea tadd, tout, resadd;
-    private JCheckBox term;
-    private JButton sub, reset;
+    private JTextArea textOut, resadd;
+    private JButton submit, reset;
 
     private String dates[]
             = {"1", "2", "3", "4", "5",
@@ -25,9 +31,16 @@ public class AddTask extends JPanel implements ActionListener {
             "26", "27", "28", "29", "30",
             "31"};
     private String months[]
-            = {"Jan", "feb", "Mar", "Apr",
+            = {"Jan", "Feb", "Mar", "Apr",
             "May", "Jun", "July", "Aug",
-            "Sup", "Oct", "Nov", "Dec"};
+            "Sept", "Oct", "Nov", "Dec"};
+    private String monthsInt[]
+            = {"01","02","03","04",
+            "05", "06","07","08",
+            "09","10","11","12"};
+
+
+
     private String years[]
             = {"2020", "2021", "2022", "2023",
             "2024", "2025", "2026", "2027",
@@ -195,23 +208,23 @@ public class AddTask extends JPanel implements ActionListener {
         groupButtonCategory.add(completed);
 
         // Buttons
-        sub = new JButton("Submit");
-        sub.setFont(new Font("Arial", Font.PLAIN, 15));
-        sub.setSize(100, 20);
-        sub.setLocation(175, 400);
-        sub.addActionListener(this);
-        sub.setForeground(Color.blue);
-        add(sub);
+        submit = new JButton("Submit");
+        submit.setFont(new Font("Arial", Font.PLAIN, 15));
+        submit.setSize(100, 20);
+        submit.setLocation(175, 400);
+        submit.addActionListener(this);
+        submit.setForeground(Color.blue);
+        add(submit);
 
 
         // Output Text Area
-        tout = new JTextArea();
-        tout.setFont(new Font("Arial", Font.PLAIN, 15));
-        tout.setSize(300, 400);
-        tout.setLocation(500, 100);
-        tout.setLineWrap(true);
-        tout.setEditable(false);
-        add(tout);
+        textOut = new JTextArea();
+        textOut.setFont(new Font("Arial", Font.PLAIN, 15));
+        textOut.setSize(300, 400);
+        textOut.setLocation(500, 100);
+        textOut.setLineWrap(true);
+        textOut.setEditable(false);
+        add(textOut);
 
         res = new JLabel("");
         res.setFont(new Font("Arial", Font.PLAIN, 20));
@@ -230,49 +243,54 @@ public class AddTask extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == sub) {
+        if (e.getSource() == submit) {
 
             String data1, data2, data3;
+            String prioritySQL = "";
+            String statusSQL = "";
+            String categorySQL = "";
             String data0
                     = "Title : "
                     + textFieldTitle.getText() + "\n"
                     + "Description : "
                     + textFieldDescription.getText() + "\n";
 
-            if (low.isSelected())
-                data1 = "Priority : LOW"
-                        + "\n";
-            else if (medium.isSelected())
-                data1 = "Priority : MEDIUM"
-                        + "\n";
-            else if (high.isSelected())
-                data1 = "Priority : HIGH"
-                        + "\n";
-            else
+            if (low.isSelected()) {
+                data1 = "Priority : LOW" + "\n";
+                prioritySQL = "LOW";
+            } else if (medium.isSelected()) {
+                data1 = "Priority : MEDIUM" + "\n";
+                prioritySQL = "MEDIUM";
+            } else if (high.isSelected()) {
+                data1 = "Priority : HIGH" + "\n";
+                prioritySQL = "HIGH";
+            } else
                 data1 = "If you see this error message, How?."
                         + "\n";
 
-            if (homework.isSelected())
-                data2 = "Category : HOMEWORK"
-                        + "\n";
-            else if (personal.isSelected())
-                data2 = "Category : PERSONAL"
-                        + "\n";
-            else if (work.isSelected())
-                data2 = "Category : WORK"
-                        + "\n";
-            else
+            if (homework.isSelected()) {
+                data2 = "Category : HOMEWORK" + "\n";
+                categorySQL = "HOMEWORK";
+            } else if (personal.isSelected()) {
+                data2 = "Category : PERSONAL" + "\n";
+                categorySQL = "PERSONAL";
+            } else if (work.isSelected()) {
+                data2 = "Category : WORK" + "\n";
+                categorySQL = "WORK";
+            } else {
                 data2 = "If you see this error message, How?.";
+            }
 
-            if (pending.isSelected())
-                data3 = "Status : PENDING"
-                        + "\n";
-            else if (completed.isSelected())
-                data3 = "Status : COMPLETED"
-                        + "\n";
+            if (pending.isSelected()){
+                data3 = "Status : PENDING" + "\n";
+                statusSQL = "PENDING";
+            }
+            else if (completed.isSelected()) {
+                data3 = "Status : COMPLETED" + "\n";
+                statusSQL = "COMPLETED";
+            }
             else
                 data3 = "If you see this error message, how?";
-
 
             String data4
                     = "DueDate : "
@@ -281,9 +299,49 @@ public class AddTask extends JPanel implements ActionListener {
                     + "/" + (String) year.getSelectedItem()
                     + "\n";
 
-            tout.setText(data0 + data1 + data2 + data3 + data4);
-            tout.setEditable(false);
-            res.setText("Tasks Added Successfully");
+
+            textOut.setText(data0 + data1 + data2 + data3 + data4);
+            textOut.setEditable(false);
+
+            HashMap<String, String> monthConversion = new HashMap<String, String>();
+            monthConversion.put("Jan", "01");
+            monthConversion.put("Feb", "02");
+            monthConversion.put("Mar", "03");
+            monthConversion.put("Apr", "04");
+            monthConversion.put("May", "05");
+            monthConversion.put("Jun", "06");
+            monthConversion.put("July", "07");
+            monthConversion.put("Aug", "08");
+            monthConversion.put("Sept", "09");
+            monthConversion.put("Oct", "10");
+            monthConversion.put("Nov", "11");
+            monthConversion.put("Dec", "12");
+
+            String dateSQL = "";
+            if(date.getSelectedItem().toString().length()==1){
+                dateSQL = "0" + date.getSelectedItem().toString();
+            }
+
+
+            String titleSQL = textFieldTitle.getText();
+            String descriptionSQL = textFieldDescription.getText();
+            String dueDateSQL = year.getSelectedItem() + "-" + monthConversion.get(month.getSelectedItem()) + "-" + dateSQL;
+            Date dueDate = Date.valueOf(dueDateSQL);
+            Tasks.Priority priority = Tasks.Priority.valueOf(prioritySQL.toUpperCase());
+            Tasks.Category category = Tasks.Category.valueOf(categorySQL.toUpperCase());
+            Tasks.Status status = Tasks.Status.valueOf(statusSQL.toUpperCase());
+            try {
+                Timestamp now = new Timestamp(System.currentTimeMillis());
+
+                Tasks task = new Tasks(0, titleSQL, descriptionSQL, dueDate, priority, status, now, now, (short) 0,
+                        0, 0, category);
+                TaskDAO.addTask(task);
+                res.setText("Tasks Added Successfully with ID: " + task.getTaskId());
+            } catch (SQLException | IllegalArgumentException err) {
+                System.out.println("Error adding task: " + err.getMessage());
+            }
+
+
         }
     }
 }
