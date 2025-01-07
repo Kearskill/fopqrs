@@ -13,6 +13,8 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Scanner;
+import java.util.HashMap;
+import java.util.Map;
 import java.sql.*;
 public class Main {
     public static void main(String[] args) {
@@ -32,7 +34,9 @@ public class Main {
             System.out.println("8. Manage Recurring Task");
             System.out.println("9. Add Task Dependency");
             System.out.println("10. Mark Task As Complete");
-            System.out.println("11. Exit");
+            System.out.println("11. Display Task Completion Rate");
+            System.out.println("12. Vector Search for Tasks");
+            System.out.println("13. Exit");
             System.out.print("Enter your choice: ");
 
             int choice = scanner.nextInt();
@@ -73,11 +77,19 @@ public class Main {
                     markTaskAsComplete(scanner);
                     break;
                 case 11:
+                    //Data analytics - task completion rate
+                    displayTaskCompletionRate();
+                    break;
+                case 12:
+                    //testing eh vector search
+                    vectorSearch(scanner);
+                    break;
+                case 13:
                     System.out.println("Exiting TaDaList! Goodbye :((((((((((");
                     exit = true;
                     break;
                 default:
-                    System.out.println("Invalid choice idiot!. Try again.");
+                    System.out.println("Invalid choice!. Try again.");
             }
         }
         scanner.close();
@@ -108,7 +120,7 @@ public class Main {
             Timestamp now = new Timestamp(System.currentTimeMillis());
 
             Tasks task = new Tasks(0, title, description, dueDate, priority, status, now, now, (short) 0,
-                    0, 0,Category);
+                    0, 0, Category);
             TaskDAO.addTask(task);
             System.out.println("Task added successfully with ID: " + task.getTaskId());
         } catch (SQLException | IllegalArgumentException e) {
@@ -196,8 +208,8 @@ public class Main {
     }
 
     //6 : Sort Task
-    private static void sortBy(Scanner scanner){
-        try{
+    private static void sortBy(Scanner scanner) {
+        try {
             System.out.println("===== Task Sorting ====");
             System.out.println("1. Due Date (Ascending to Descending)");
             System.out.println("2. Due Date (Descending to Ascending)");
@@ -206,7 +218,7 @@ public class Main {
             String userOption = scanner.nextLine();
 
             //advance switch case
-            boolean ascending  = switch(userOption) {
+            boolean ascending = switch (userOption) {
                 case "1" -> true;
                 case "2" -> false;
                 case "3" -> true;
@@ -225,9 +237,9 @@ public class Main {
 
             for (Tasks task : sortedTasks) {
                 System.out.println(task.getTitle() + " - " + userOption + ": "
-                + getColumnValue(task, userOption));
+                        + getColumnValue(task, userOption));
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -272,9 +284,9 @@ public class Main {
     }
 
     //Option 8: Manage Recurring Task
-    private static void recurringTaskMenu(Scanner scanner){
+    private static void recurringTaskMenu(Scanner scanner) {
         boolean exit = false;
-        while(!exit){
+        while (!exit) {
             System.out.println("\n===== Recurring Task Management =====");
             System.out.println("1. Add Recurring Task");
             System.out.println("2. Delete Recurring Tasks");
@@ -283,7 +295,7 @@ public class Main {
             System.out.print("Enter your choice: ");
             String choice = scanner.nextLine();
 
-            switch(choice){
+            switch (choice) {
                 case "1":
                     addRecurringTask(scanner);
                     break;
@@ -303,19 +315,20 @@ public class Main {
         }
 
     }
+
     private static void addRecurringTask(Scanner scanner) {
         try {
             System.out.println("=== Add a Recurring Task ===");
             System.out.println("Enter Task Title:");
             String title = scanner.nextLine();
             System.out.print("Enter Task Description: ");
-            String description =  scanner.nextLine();
+            String description = scanner.nextLine();
 
             System.out.print("Recurrence Type (DAILY, WEEKLY, MONTHLY): ");
             recurringTask.recurrenceType recurrenceType =
                     recurringTask.recurrenceType.valueOf(scanner.nextLine().toUpperCase());
 
-            recurringTask task = new recurringTask(0,title, description, recurrenceType);
+            recurringTask task = new recurringTask(0, title, description, recurrenceType);
             recurringTaskDAO.addRecurringTask(task);
 
             System.out.println("Recurring task successfully added with Task ID of " + task.getRecurringID());
@@ -323,6 +336,7 @@ public class Main {
             System.out.println("Error adding recurring task: " + e.getMessage());
         }
     }
+
     //delete recurring task
     private static void deleteRecurringTask(Scanner scanner) {
         try {
@@ -335,8 +349,8 @@ public class Main {
         }
     }
 
-    private static void editRecurringTask(Scanner scanner){
-        try{
+    private static void editRecurringTask(Scanner scanner) {
+        try {
             System.out.println("Enter Task ID to edit: ");
             int recurringID = scanner.nextInt();
             scanner.nextLine();
@@ -351,16 +365,16 @@ public class Main {
                     recurringTask.recurrenceType.valueOf(scanner.nextLine().toUpperCase());
 
 
-
             edit.setTitle(title);
             edit.setDescription(description);
             edit.setRecurrenceType(recurrenceType);
 
             recurringTaskDAO.updateRecurringTask(edit);
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             System.out.println("Error deleting task: " + e.getMessage());
         }
     }
+
     // Option 9: Add Task Dependency
     private static void addTaskDependency(Scanner scanner) {
         try {
@@ -411,6 +425,105 @@ public class Main {
         }
     }
 
+    private static void displayTaskCompletionRate() {
+        try {
+            List<Tasks> taskList = TaskDAO.getAllTasks();  // Fetch all tasks
+
+            if (taskList == null || taskList.isEmpty()) {
+                System.out.println("No tasks found to calculate completion rate.");
+                return;
+            }
+
+            // Count the total number of tasks
+            int totalTasks = taskList.size();
+
+            // Count the number of completed tasks
+            int completedTasks = 0;
+            for (Tasks task : taskList) {
+                if (task.getStatus() == Tasks.Status.COMPLETED) {
+                    completedTasks++;
+                }
+            }
+
+            // Calculate the completion rate as a percentage
+            double completionRate = ((double) completedTasks / totalTasks) * 100;
+
+            // Display the results to the user
+            System.out.println("\n===== Task Completion Rate =====");
+            System.out.println("Total Tasks: " + totalTasks);
+            System.out.println("Completed Tasks: " + completedTasks);
+            System.out.printf("Completion Rate: %.2f%%\n", completionRate);
+
+            // Additional explanation of the calculation
+            System.out.println("\nThe completion rate is calculated as:");
+            System.out.println("    (Completed Tasks / Total Tasks) * 100");
+            System.out.println("    = (" + completedTasks + " / " + totalTasks + ") * 100");
+            System.out.printf("    = %.2f%%\n", completionRate);
+
+        } catch (SQLException e) {
+            System.out.println("Error fetching tasks for completion rate: " + e.getMessage());
+        }
+    }
+
+//option 12: testing vector search
+
+    private static void vectorSearch(Scanner scanner) {
+        try {
+            System.out.println("Enter a query to search for similar tasks:");
+            String query = scanner.nextLine();
+
+            // Fetch all tasks
+            List<Tasks> taskList = TaskDAO.getAllTasks();
+
+            // Vector similarity computation
+            System.out.println("\n===== Vector Search Results =====");
+            for (Tasks task : taskList) {
+                double similarity = calculateCosineSimilarity(query, task.getTitle() + " " + task.getDescription());
+                if (similarity > 0.2) { // Set a threshold for similarity
+                    System.out.printf(
+                            "%d. %s - Similarity: %.2f\n",
+                            task.getTaskId(),
+                            task.getTitle(),
+                            similarity
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching tasks for vector search: " + e.getMessage());
+        }
+    }
+
+    private static double calculateCosineSimilarity(String query, String text) {
+        Map<String, Integer> queryVector = tokenizeAndCount(query);
+        Map<String, Integer> textVector = tokenizeAndCount(text);
+
+        double dotProduct = 0.0, queryMagnitude = 0.0, textMagnitude = 0.0;
+        for (String key : queryVector.keySet()) {
+            int queryCount = queryVector.getOrDefault(key, 0);
+            int textCount = textVector.getOrDefault(key, 0);
+            dotProduct += queryCount * textCount;
+            queryMagnitude += Math.pow(queryCount, 2);
+        }
+        for (int count : textVector.values()) {
+            textMagnitude += Math.pow(count, 2);
+        }
+
+        queryMagnitude = Math.sqrt(queryMagnitude);
+        textMagnitude = Math.sqrt(textMagnitude);
+
+        return dotProduct / (queryMagnitude * textMagnitude);
+    }
+
+    private static Map<String, Integer> tokenizeAndCount(String text) {
+        Map<String, Integer> wordCount = new HashMap<>();
+        String[] words = text.toLowerCase().split("\\W+");
+        for (String word : words) {
+            wordCount.put(word, wordCount.getOrDefault(word, 0) + 1);
+        }
+        return wordCount;
+    }
+
+
     // Get connection method for TaskDependencyDAO
     private static Connection getConnection() throws SQLException {
         String url = "jdbc:mysql://localhost:3306/realtadalist_db";
@@ -419,6 +532,3 @@ public class Main {
         return DriverManager.getConnection(url, username, password);
     }
 }
-
-
-
