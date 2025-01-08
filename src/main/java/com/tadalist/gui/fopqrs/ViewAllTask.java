@@ -12,6 +12,7 @@ import java.sql.Statement;
 
 public class ViewAllTask extends JPanel {
     private JPanel taskPanel;
+    private JScrollPane scrollPane;
 
     public ViewAllTask() {
         setLayout(new BorderLayout());
@@ -21,13 +22,12 @@ public class ViewAllTask extends JPanel {
         add(title, BorderLayout.NORTH);
 
         // Panel to hold task icons
-        taskPanel = new JPanel();
-        taskPanel.setLayout(new GridLayout(3, 4, 10, 10)); // 3 rows, 4 columns with spacing
+        taskPanel = new JPanel(new GridLayout(0, 4, 10, 10)); // Dynamic rows, 4 columns
 
-        loadTasks();
+        loadTasks(); // Initial Load
 
         // Make scrollable
-        JScrollPane scrollPane = new JScrollPane(taskPanel, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane = new JScrollPane(taskPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         add(scrollPane, BorderLayout.CENTER);
 
         // Refresh button
@@ -42,21 +42,25 @@ public class ViewAllTask extends JPanel {
     }
 
     private void loadTasks() {
-        taskPanel.removeAll();
+        taskPanel.removeAll(); // Clear panel before loading new tasks
 
         // Database connection and fetching tasks
-        try {
-            Connection conn = dbConnection.getConnection();
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM tasks");
+        try (Connection conn = dbConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM tasks")) {
 
             while (rs.next()) {
                 String taskName = rs.getString("Title");
 
                 // Assign icon based on task type
                 String iconPath = "default_icon.svg";
+                ImageIcon icon = new ImageIcon(iconPath);
 
-                JButton taskButton = new JButton(taskName, new ImageIcon(iconPath));
+                if (icon.getIconWidth() <= 0) { // If the image file is not found
+                    icon = new ImageIcon(new byte[0]); // Use an empty icon
+                }
+
+                JButton taskButton = new JButton(taskName, icon);
                 taskButton.setVerticalTextPosition(SwingConstants.BOTTOM);
                 taskButton.setHorizontalTextPosition(SwingConstants.CENTER);
                 taskButton.setFocusPainted(false);
@@ -73,16 +77,16 @@ public class ViewAllTask extends JPanel {
                 taskPanel.add(taskButton);
             }
 
-            conn.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+        // Ensure UI updates correctly
         taskPanel.revalidate();
         taskPanel.repaint();
     }
 
     private void reloadTasks() {
-        loadTasks();
+        loadTasks(); // Re-fetch and update tasks
     }
 }
