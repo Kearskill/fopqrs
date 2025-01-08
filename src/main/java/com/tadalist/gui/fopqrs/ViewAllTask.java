@@ -8,15 +8,38 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.tadalist.dao.fopqrs.TaskDAO.deleteTasks;
 
 public class ViewAllTask extends JPanel {
-    private JPanel taskPanel;
+    private String dates[]
+            = {"01", "02", "03", "04", "05",
+            "06", "07", "08", "09", "10",
+            "11", "12", "13", "14", "15",
+            "16", "17", "18", "19", "20",
+            "21", "22", "23", "24", "25",
+            "26", "27", "28", "29", "30",
+            "31"};
+    private String months[]
+            = {"Jan", "Feb", "Mar", "Apr",
+            "May", "Jun", "July", "Aug",
+            "Sept", "Oct", "Nov", "Dec"};
+
+    private String years[]
+            = {"2020", "2021", "2022", "2023",
+            "2024", "2025", "2026", "2027",
+            "2028", "2029", "2030", "2031",
+            "2032", "2033", "2034", "2035"};
+
+
+    private JPanel taskPanel, dueDate;
     private JScrollPane scrollPane;
     private JTextField searchField;
     private List<TaskItem> allTasks = new ArrayList<>();
+    private JComboBox date, month, year;
 
     public ViewAllTask() {
         setLayout(new BorderLayout());
@@ -117,6 +140,7 @@ public class ViewAllTask extends JPanel {
         }
         updateTaskDisplay(filteredTasks);
     }
+
     private void openTaskEditor(TaskItem task) {
         JFrame editorFrame = new JFrame("Edit Task - " + task.title);
         editorFrame.setSize(500, 400);
@@ -141,10 +165,108 @@ public class ViewAllTask extends JPanel {
         addComponentToFrame(editorFrame, descriptionScroll, gbc, 1, 1, 2, 1);
 
         // Due Date Field
+        // Init
+        date = new JComboBox<>(dates);
+        month = new JComboBox<>(months);
+        year = new JComboBox<>(years);
+
+        HashMap<String, String> monthConversionReversed = new HashMap<String, String>();
+        monthConversionReversed.put("01", "Jan");
+        monthConversionReversed.put("02", "Feb");
+        monthConversionReversed.put("03", "Mar");
+        monthConversionReversed.put("04", "Apr");
+        monthConversionReversed.put("05", "May");
+        monthConversionReversed.put("06", "Jun");
+        monthConversionReversed.put("07", "July");
+        monthConversionReversed.put("08", "Aug");
+        monthConversionReversed.put("09", "Sept");
+        monthConversionReversed.put("10", "Oct");
+        monthConversionReversed.put("11", "Nov");
+        monthConversionReversed.put("12", "Dec");
+
+        String[] a = task.dueDate.split("-");
+        System.out.println(task.dueDate);
+        System.out.println("a[0] contains: '" + a[0] + "' (length: " + a[0].length() + ")");
+        System.out.println(a[1]);
+        System.out.println(a[2]);
+        System.out.println("Parsed date: " + Arrays.toString(a));  // debug
+
+// Ensure day is always in two-digit format
+        String day = Integer.parseInt(a[2]) < 10 ? "0" + Integer.parseInt(a[2]) : a[2];
+        date.setSelectedItem(day);
+
+// Ensure month is mapped correctly
+        String monthStr = monthConversionReversed.get(a[1]);
+        if (monthStr != null) {
+            month.setSelectedItem(monthStr);
+        } else {
+            System.out.println("Invalid month from DB: " + a[1]);
+        }
+        month.setSelectedItem(monthConversionReversed.get(a[1]));
+
+        // Setting the year
+        String yearFromDb = a[0].trim();  // "2035"
+        System.out.println("Year from DB: " + yearFromDb);  // Log the year value
+
+        boolean yearFound = false;
+        for (int i = 0; i < year.getItemCount(); i++) {
+            System.out.println("Year in JComboBox: " + year.getItemAt(i));  // Log each year item
+            if (year.getItemAt(i).equals(yearFromDb)) {
+                year.setSelectedIndex(i);  // Select the year if found
+                yearFound = true;
+                break;
+            }
+        }
+
+        if (!yearFound) {
+            System.out.println("Year " + yearFromDb + " not found in JComboBox.");
+        } else {
+            System.out.println("Year " + yearFromDb + " successfully selected.");
+        }
+
+
+
+        HashMap<String, String> monthConversion = new HashMap<String, String>();
+        monthConversion.put("Jan", "01");
+        monthConversion.put("Feb", "02");
+        monthConversion.put("Mar", "03");
+        monthConversion.put("Apr", "04");
+        monthConversion.put("May", "05");
+        monthConversion.put("Jun", "06");
+        monthConversion.put("July", "07");
+        monthConversion.put("Aug", "08");
+        monthConversion.put("Sept", "09");
+        monthConversion.put("Oct", "10");
+        monthConversion.put("Nov", "11");
+        monthConversion.put("Dec", "12");
+
+
+
+
         JLabel dueDateLabel = new JLabel("Due Date:");
-        JTextField dueDateField = new JTextField(task.dueDate);
+//        JTextField dueDateField = new JTextField(task.dueDate);
         addComponentToFrame(editorFrame, dueDateLabel, gbc, 0, 2, 1, 1);
-        addComponentToFrame(editorFrame, dueDateField, gbc, 1, 2, 2, 1);
+
+        date = new JComboBox(dates);
+        date.setFont(new Font("Arial", Font.PLAIN, 15));
+        date.setSize(50, 20);
+        date.setLocation(200, 300);
+        addComponentToFrame(editorFrame, date, gbc, 1, 2, 1, 1);
+
+        month = new JComboBox(months);
+        month.setFont(new Font("Arial", Font.PLAIN, 15));
+        month.setSize(60, 20);
+        month.setLocation(250, 300);
+        addComponentToFrame(editorFrame, month, gbc, 2, 2, 1, 1);
+
+        year = new JComboBox(years);
+        year.setFont(new Font("Arial", Font.PLAIN, 15));
+        year.setSize(60, 20);
+        year.setLocation(320, 300);
+        addComponentToFrame(editorFrame, year, gbc, 3, 2, 1, 1);
+
+
+
 
         // Priority Field
         JLabel priorityLabel = new JLabel("Priority:");
@@ -176,12 +298,39 @@ public class ViewAllTask extends JPanel {
         // Buttons (Save and Delete)
         JButton saveButton = new JButton("Save");
         saveButton.addActionListener(e -> {
-            updateTaskInDatabase(task.id, titleField.getText(), descriptionArea.getText(), dueDateField.getText(),
-                    (String) priorityBox.getSelectedItem(), (String) statusBox.getSelectedItem(),
-                    isRecurringBox.isSelected(), (String) categoryBox.getSelectedItem());
+            String daySQL = (String) date.getSelectedItem();
+            if (daySQL.length() == 1) {
+                daySQL = "0" + daySQL;  // Ensure it is two digits
+            }
+            String monthSQL= monthConversion.get(month.getSelectedItem());
 
-            editorFrame.dispose();
-            reloadTasks();
+            if (monthSQL == null) {
+                System.out.println("Invalid month selection: " + month.getSelectedItem());
+                return;  // Prevents further execution if month conversion fails
+            }
+
+            String dueDateSQL = year.getSelectedItem() + "-" + monthSQL + "-" + daySQL;
+
+            try {
+                Date dueDate = Date.valueOf(dueDateSQL);
+                System.out.println(dueDate);
+                System.out.println(a[0]);
+                System.out.println(a[1]);
+                System.out.println(a[2]);
+
+
+                updateTaskInDatabase(task.id, titleField.getText(), descriptionArea.getText(), dueDate,
+                        (String) priorityBox.getSelectedItem(), (String) statusBox.getSelectedItem(),
+                        isRecurringBox.isSelected(), (String) categoryBox.getSelectedItem());
+
+                System.out.println(dueDate);
+                editorFrame.dispose();
+                reloadTasks();
+            } catch(IllegalArgumentException err){
+                JOptionPane.showMessageDialog(null, "Invalid date format: " + dueDateSQL, "Error", JOptionPane.ERROR_MESSAGE);
+                err.printStackTrace();
+            }
+
         });
 
         JButton deleteButton = new JButton("Delete");
@@ -227,7 +376,6 @@ public class ViewAllTask extends JPanel {
     }
 
 
-
     // Helper method to add components to frame
     private void addComponentToFrame(JFrame frame, JComponent component, GridBagConstraints gbc, int x, int y, int width, int height, int anchor) {
         gbc.gridx = x;
@@ -240,15 +388,16 @@ public class ViewAllTask extends JPanel {
     }
 
 
-    private void updateTaskInDatabase(int taskId, String title, String description, String dueDate,
+    private void updateTaskInDatabase(int taskId, String title, String description, Date dueDate,
                                       String priority, String status, boolean isRecurring, String category) {
+
+
         try (Connection conn = dbConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(
                      "UPDATE tasks SET Title=?, Description=?, DueDate=?, Priority=?, Status=?, IsRecurring=?, Category=?, UpdatedAt=NOW() WHERE TaskID=?")) {
             stmt.setString(1, title);
             stmt.setString(2, description);
-            stmt.setString(3, dueDate);
-
+            stmt.setDate(3, dueDate);
             stmt.setString(4, priority);
             stmt.setString(5, status);
             stmt.setBoolean(6, isRecurring);

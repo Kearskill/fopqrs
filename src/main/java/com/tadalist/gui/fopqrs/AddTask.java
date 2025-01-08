@@ -34,12 +34,6 @@ public class AddTask extends JPanel implements ActionListener {
             = {"Jan", "Feb", "Mar", "Apr",
             "May", "Jun", "July", "Aug",
             "Sept", "Oct", "Nov", "Dec"};
-    private String monthsInt[]
-            = {"01","02","03","04",
-            "05", "06","07","08",
-            "09","10","11","12"};
-
-
 
     private String years[]
             = {"2020", "2021", "2022", "2023",
