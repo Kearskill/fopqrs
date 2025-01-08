@@ -1,5 +1,6 @@
 package com.tadalist.gui.fopqrs;
 
+import com.tadalist.dao.fopqrs.TaskDAO;
 import com.tadalist.dao.fopqrs.dbConnection;
 
 import javax.swing.*;
@@ -8,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.tadalist.dao.fopqrs.TaskDAO.deleteTasks;
 
 public class ViewAllTask extends JPanel {
     private JPanel taskPanel;
@@ -114,27 +117,63 @@ public class ViewAllTask extends JPanel {
         }
         updateTaskDisplay(filteredTasks);
     }
-
     private void openTaskEditor(TaskItem task) {
         JFrame editorFrame = new JFrame("Edit Task - " + task.title);
-        editorFrame.setSize(400, 400);
-        editorFrame.setLayout(new GridLayout(9, 2, 5, 5));
+        editorFrame.setSize(500, 400);
+        editorFrame.setLocationRelativeTo(null);
+        editorFrame.setLayout(new GridBagLayout());
 
-        JTextField titleField = new JTextField(task.title);
-        JTextArea descriptionArea = new JTextArea(task.description);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10); // Padding for components
+
+        // Title Field
+        JLabel titleLabel = new JLabel("Title:");
+        JTextField titleField = new JTextField(task.title, 20);
+        addComponentToFrame(editorFrame, titleLabel, gbc, 0, 0, 1, 1);
+        addComponentToFrame(editorFrame, titleField, gbc, 1, 0, 2, 1);
+
+        // Description Field
+        JLabel descriptionLabel = new JLabel("Description:");
+        JTextArea descriptionArea = new JTextArea(task.description, 5, 20);
+        descriptionArea.setLineWrap(true);
+        JScrollPane descriptionScroll = new JScrollPane(descriptionArea);
+        addComponentToFrame(editorFrame, descriptionLabel, gbc, 0, 1, 1, 1);
+        addComponentToFrame(editorFrame, descriptionScroll, gbc, 1, 1, 2, 1);
+
+        // Due Date Field
+        JLabel dueDateLabel = new JLabel("Due Date:");
         JTextField dueDateField = new JTextField(task.dueDate);
+        addComponentToFrame(editorFrame, dueDateLabel, gbc, 0, 2, 1, 1);
+        addComponentToFrame(editorFrame, dueDateField, gbc, 1, 2, 2, 1);
+
+        // Priority Field
+        JLabel priorityLabel = new JLabel("Priority:");
         JComboBox<String> priorityBox = new JComboBox<>(new String[]{"Low", "Medium", "High"});
         priorityBox.setSelectedItem(task.priority);
+        addComponentToFrame(editorFrame, priorityLabel, gbc, 0, 3, 1, 1);
+        addComponentToFrame(editorFrame, priorityBox, gbc, 1, 3, 2, 1);
+
+        // Status Field
+        JLabel statusLabel = new JLabel("Status:");
         JComboBox<String> statusBox = new JComboBox<>(new String[]{"Pending", "In Progress", "Completed"});
         statusBox.setSelectedItem(task.status);
-        JTextField createdAtField = new JTextField(task.createdAt);
-        createdAtField.setEditable(false);
-        JTextField updatedAtField = new JTextField(task.updatedAt);
-        updatedAtField.setEditable(false);
-        JCheckBox isRecurringBox = new JCheckBox("Recurring", task.isRecurring);
+        addComponentToFrame(editorFrame, statusLabel, gbc, 0, 4, 1, 1);
+        addComponentToFrame(editorFrame, statusBox, gbc, 1, 4, 2, 1);
+
+        // Recurring Checkbox
+        JLabel recurringLabel = new JLabel("Recurring:");
+        JCheckBox isRecurringBox = new JCheckBox("", task.isRecurring);
+        addComponentToFrame(editorFrame, recurringLabel, gbc, 0, 5, 1, 1);
+        addComponentToFrame(editorFrame, isRecurringBox, gbc, 1, 5, 1, 1);
+
+        // Category Field
+        JLabel categoryLabel = new JLabel("Category:");
         JComboBox<String> categoryBox = new JComboBox<>(new String[]{"Work", "Personal", "Others"});
         categoryBox.setSelectedItem(task.category);
+        addComponentToFrame(editorFrame, categoryLabel, gbc, 0, 6, 1, 1);
+        addComponentToFrame(editorFrame, categoryBox, gbc, 1, 6, 2, 1);
 
+        // Buttons (Save and Delete)
         JButton saveButton = new JButton("Save");
         saveButton.addActionListener(e -> {
             updateTaskInDatabase(task.id, titleField.getText(), descriptionArea.getText(), dueDateField.getText(),
@@ -145,28 +184,61 @@ public class ViewAllTask extends JPanel {
             reloadTasks();
         });
 
-        editorFrame.add(new JLabel("Title:"));
-        editorFrame.add(titleField);
-        editorFrame.add(new JLabel("Description:"));
-        editorFrame.add(new JScrollPane(descriptionArea));
-        editorFrame.add(new JLabel("Due Date (YYYY-MM-DD):"));
-        editorFrame.add(dueDateField);
-        editorFrame.add(new JLabel("Priority:"));
-        editorFrame.add(priorityBox);
-        editorFrame.add(new JLabel("Status:"));
-        editorFrame.add(statusBox);
-        editorFrame.add(new JLabel("Created At:"));
-        editorFrame.add(createdAtField);
-        editorFrame.add(new JLabel("Updated At:"));
-        editorFrame.add(updatedAtField);
-        editorFrame.add(new JLabel("Recurring:"));
-        editorFrame.add(isRecurringBox);
-        editorFrame.add(new JLabel("Category:"));
-        editorFrame.add(categoryBox);
-        editorFrame.add(saveButton);
+        JButton deleteButton = new JButton("Delete");
+        deleteButton.setForeground(Color.RED);
+        deleteButton.addActionListener(e -> {
+            int confirm = JOptionPane.showConfirmDialog(editorFrame, "Are you sure you want to delete this task?", "Confirm Deletion", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                try {
+                    System.out.println(task.id);
+                    TaskDAO.deleteTasks(task.id);
+                } catch (SQLException err) {
+                    if (err.getMessage().contains("Cannot delete or update a parent row: a foreign key constraint fails")) {
+                        JOptionPane.showMessageDialog(null, "Task is dependent on other tasks and cannot be deleted.", "Deletion Error", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        // Handle other SQL exceptions
+                        System.out.println("Error deleting task: " + err.getMessage());
+                    }
+                }
+                editorFrame.dispose();
+                reloadTasks();
+            }
+        });
+
+        // Layout for Buttons
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(saveButton);
+        buttonPanel.add(deleteButton);
+        addComponentToFrame(editorFrame, buttonPanel, gbc, 0, 7, 3, 1);
 
         editorFrame.setVisible(true);
     }
+
+
+    // Helper method to add components to frame
+    private void addComponentToFrame(JFrame frame, JComponent component, GridBagConstraints gbc, int x, int y, int width, int height) {
+        gbc.gridx = x;
+        gbc.gridy = y;
+        gbc.gridwidth = width;
+        gbc.gridheight = height;
+        gbc.anchor = GridBagConstraints.WEST;  // Choose anchor as WEST or CENTER based on requirement
+        gbc.fill = GridBagConstraints.HORIZONTAL; // Ensure horizontal fill for text fields and buttons
+        frame.add(component, gbc);
+    }
+
+
+
+    // Helper method to add components to frame
+    private void addComponentToFrame(JFrame frame, JComponent component, GridBagConstraints gbc, int x, int y, int width, int height, int anchor) {
+        gbc.gridx = x;
+        gbc.gridy = y;
+        gbc.gridwidth = width;
+        gbc.gridheight = height;
+        gbc.anchor = anchor; // Correct anchor values
+        gbc.fill = GridBagConstraints.HORIZONTAL; // To ensure horizontal fill for most components
+        frame.add(component, gbc);
+    }
+
 
     private void updateTaskInDatabase(int taskId, String title, String description, String dueDate,
                                       String priority, String status, boolean isRecurring, String category) {
@@ -176,6 +248,7 @@ public class ViewAllTask extends JPanel {
             stmt.setString(1, title);
             stmt.setString(2, description);
             stmt.setString(3, dueDate);
+
             stmt.setString(4, priority);
             stmt.setString(5, status);
             stmt.setBoolean(6, isRecurring);
