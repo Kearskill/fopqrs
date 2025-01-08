@@ -191,38 +191,15 @@ public class ViewAllTask extends JPanel {
         System.out.println(a[2]);
         System.out.println("Parsed date: " + Arrays.toString(a));  // debug
 
-// Ensure day is always in two-digit format
-        String day = Integer.parseInt(a[2]) < 10 ? "0" + Integer.parseInt(a[2]) : a[2];
-        date.setSelectedItem(day);
+
 
 // Ensure month is mapped correctly
         String monthStr = monthConversionReversed.get(a[1]);
-        if (monthStr != null) {
-            month.setSelectedItem(monthStr);
-        } else {
-            System.out.println("Invalid month from DB: " + a[1]);
-        }
-        month.setSelectedItem(monthConversionReversed.get(a[1]));
 
         // Setting the year
         String yearFromDb = a[0].trim();  // "2035"
         System.out.println("Year from DB: " + yearFromDb);  // Log the year value
 
-        boolean yearFound = false;
-        for (int i = 0; i < year.getItemCount(); i++) {
-            System.out.println("Year in JComboBox: " + year.getItemAt(i));  // Log each year item
-            if (year.getItemAt(i).equals(yearFromDb)) {
-                year.setSelectedIndex(i);  // Select the year if found
-                yearFound = true;
-                break;
-            }
-        }
-
-        if (!yearFound) {
-            System.out.println("Year " + yearFromDb + " not found in JComboBox.");
-        } else {
-            System.out.println("Year " + yearFromDb + " successfully selected.");
-        }
 
 
 
@@ -253,11 +230,24 @@ public class ViewAllTask extends JPanel {
         date.setLocation(200, 300);
         addComponentToFrame(editorFrame, date, gbc, 1, 2, 1, 1);
 
+        // Ensure day is always in two-digit format
+        String day = Integer.parseInt(a[2]) < 10 ? "0" + Integer.parseInt(a[2]) : a[2];
+        date.setSelectedItem(day);
+
         month = new JComboBox(months);
         month.setFont(new Font("Arial", Font.PLAIN, 15));
         month.setSize(60, 20);
         month.setLocation(250, 300);
         addComponentToFrame(editorFrame, month, gbc, 2, 2, 1, 1);
+
+        if (monthStr != null) {
+            month.setSelectedItem(monthStr);
+        } else {
+            System.out.println("Invalid month from DB: " + a[1]);
+        }
+        month.setSelectedItem(monthConversionReversed.get(a[1]));
+
+
 
         year = new JComboBox(years);
         year.setFont(new Font("Arial", Font.PLAIN, 15));
@@ -265,6 +255,21 @@ public class ViewAllTask extends JPanel {
         year.setLocation(320, 300);
         addComponentToFrame(editorFrame, year, gbc, 3, 2, 1, 1);
 
+        boolean yearFound = false;
+        for (int i = 0; i < year.getItemCount(); i++) {
+            System.out.println("Year in JComboBox: " + year.getItemAt(i));  // Log each year item
+            if (year.getItemAt(i).equals(yearFromDb)) {
+                year.setSelectedIndex(i);  // Select the year if found
+                yearFound = true;
+                break;
+            }
+        }
+
+        if (!yearFound) {
+            System.out.println("Year " + yearFromDb + " not found in JComboBox.");
+        } else {
+            System.out.println("Year " + yearFromDb + " successfully selected.");
+        }
 
 
 
