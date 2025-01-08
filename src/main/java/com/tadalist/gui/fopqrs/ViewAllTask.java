@@ -9,84 +9,155 @@ import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ViewAllTask extends JPanel {
     private JPanel taskPanel;
     private JScrollPane scrollPane;
+    private JTextField searchField;
+    private List<TaskItem> allTasks = new ArrayList<>();
 
     public ViewAllTask() {
         setLayout(new BorderLayout());
 
+        // Title
         JLabel title = new JLabel("View All Tasks", SwingConstants.CENTER);
         title.setFont(new Font("Arial", Font.BOLD, 24));
         add(title, BorderLayout.NORTH);
 
-        // Panel to hold task icons
+        // Search bar
+        JPanel searchPanel = new JPanel(new BorderLayout());
+        searchField = new JTextField();
+        JButton searchButton = new JButton("Search");
+
+        searchButton.addActionListener(e -> filterTasks(searchField.getText()));
+        searchPanel.add(searchField, BorderLayout.CENTER);
+        searchPanel.add(searchButton, BorderLayout.EAST);
+        add(searchPanel, BorderLayout.NORTH);
+
+        // Task panel
         taskPanel = new JPanel(new GridLayout(0, 4, 10, 10)); // Dynamic rows, 4 columns
-
-        loadTasks(); // Initial Load
-
-        // Make scrollable
         scrollPane = new JScrollPane(taskPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         add(scrollPane, BorderLayout.CENTER);
 
         // Refresh button
         JButton refreshButton = new JButton("Refresh");
-        refreshButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                reloadTasks();
-            }
-        });
+        refreshButton.addActionListener(e -> reloadTasks());
         add(refreshButton, BorderLayout.SOUTH);
+
+        // Load tasks initially
+        loadTasks();
     }
 
     private void loadTasks() {
-        taskPanel.removeAll(); // Clear panel before loading new tasks
+        taskPanel.removeAll();
+        allTasks.clear();
 
-        // Database connection and fetching tasks
         try (Connection conn = dbConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT * FROM tasks")) {
 
             while (rs.next()) {
+                int taskId = rs.getInt("TaskID");
                 String taskName = rs.getString("Title");
+                String description = rs.getString("Description");
+                String dueDate = rs.getString("DueDate");
+                String priority = rs.getString("Priority");
+                String status = rs.getString("Status");
+                String createdAt = rs.getString("CreatedAt");
+                String UpdatedAt = rs.getString("UpdatedAt");
+                boolean isRecurring = rs.getBoolean("IsRecurring");
+                String category = rs.getString("Category");
 
-                // Assign icon based on task type
-                String iconPath = "default_icon.svg";
-                ImageIcon icon = new ImageIcon(iconPath);
-
-                if (icon.getIconWidth() <= 0) { // If the image file is not found
-                    icon = new ImageIcon(new byte[0]); // Use an empty icon
-                }
-
-                JButton taskButton = new JButton(taskName, icon);
-                taskButton.setVerticalTextPosition(SwingConstants.BOTTOM);
-                taskButton.setHorizontalTextPosition(SwingConstants.CENTER);
-                taskButton.setFocusPainted(false);
-                taskButton.setBorder(BorderFactory.createEmptyBorder());
-
-                // Add click event
-                taskButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        JOptionPane.showMessageDialog(null, "You clicked on " + taskName);
-                    }
-                });
-
-                taskPanel.add(taskButton);
+                // Create task object
+                TaskItem taskItem = new TaskItem(taskId, taskName, description, status);
+                allTasks.add(taskItem);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        // Ensure UI updates correctly
+        // Display tasks
+        updateTaskDisplay(allTasks);
+    }
+
+    private void updateTaskDisplay(List<TaskItem> tasks) {
+        taskPanel.removeAll();
+
+        for (TaskItem task : tasks) {
+            JButton taskButton = new JButton(task.title);
+            taskButton.setVerticalTextPosition(SwingConstants.BOTTOM);
+            taskButton.setHorizontalTextPosition(SwingConstants.CENTER);
+            taskButton.setFocusPainted(false);
+            taskButton.setBorder(BorderFactory.createEmptyBorder());
+
+            // Clicking opens editor
+            taskButton.addActionListener(e -> openTaskEditor(task));
+
+            taskPanel.add(taskButton);
+        }
+
         taskPanel.revalidate();
         taskPanel.repaint();
     }
 
     private void reloadTasks() {
-        loadTasks(); // Re-fetch and update tasks
+        loadTasks();
+        searchField.setText("");
+    }
+
+    private void filterTasks(String query) {
+        List<TaskItem> filteredTasks = new ArrayList<>();
+        for (TaskItem task : allTasks) {
+            if (task.title.toLowerCase().contains(query.toLowerCase())) {
+                filteredTasks.add(task);
+            }
+        }
+        updateTaskDisplay(filteredTasks);
+    }
+
+    private void openTaskEditor(TaskItem task) {
+        JFrame editorFrame = new JFrame("Edit Task - " + task.title);
+        editorFrame.setSize(400, 300);
+        editorFrame.setLayout(new BorderLayout());
+
+        JPanel inputPanel = new JPanel(new GridLayout(3, 1, 5, 5));
+        JTextField titleField = new JTextField(task.title);
+        JTextArea descriptionArea = new JTextArea(task.description);
+        JComboBox<String> statusBox = new JComboBox<>(new String[]{"Pending", "In Progress", "Completed"});
+        statusBox.setSelectedItem(task.status);
+
+        inputPanel.add(titleField);
+        inputPanel.add(new JScrollPane(descriptionArea));
+        inputPanel.add(statusBox);
+
+        JButton saveButton = new JButton("Save");
+        saveButton.addActionListener(e -> {
+            task.title = titleField.getText();
+            task.description = descriptionArea.getText();
+            task.status = (String) statusBox.getSelectedItem();
+            editorFrame.dispose();
+            reloadTasks();
+        });
+
+        editorFrame.add(inputPanel, BorderLayout.CENTER);
+        editorFrame.add(saveButton, BorderLayout.SOUTH);
+        editorFrame.setVisible(true);
+    }
+
+    private static class TaskItem {
+        int id;
+        String title;
+        String description;
+        String status;
+
+        public TaskItem(int id, String title, String description, String status) {
+            this.id = id;
+            this.title = title;
+            this.description = description;
+            this.status = status;
+        }
     }
 }
