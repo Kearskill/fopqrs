@@ -275,6 +275,7 @@ public class AddTask extends JPanel implements ActionListener {
             String prioritySQL = "";
             String statusSQL = "";
             String categorySQL = "";
+            String emailSQL = "";
             String data0
                     = "Title : "
                     + textFieldTitle.getText() + "\n"
@@ -308,7 +309,8 @@ public class AddTask extends JPanel implements ActionListener {
             }
 
             if (pending.isSelected()){
-                data3 = "Status : PENDING" + "\n";
+                emailSQL = textFieldEmail.getText();
+                data3 = "Status : PENDING" + "\nEmail:" + emailSQL +"\n" ;
                 statusSQL = "PENDING";
             }
             else if (completed.isSelected()) {
@@ -360,14 +362,12 @@ public class AddTask extends JPanel implements ActionListener {
                 Timestamp now = new Timestamp(System.currentTimeMillis());
 
                 Tasks task = new Tasks(0, titleSQL, descriptionSQL, dueDate, priority, status, now, now, (short) 0,
-                        0, 0, category,null,false,false);
+                        0, 0, category,emailSQL,true,false);
                 TaskDAO.addTask(task);
                 res.setText("Tasks Added Successfully with ID: " + task.getTaskId());
             } catch (SQLException | IllegalArgumentException err) {
                 System.out.println("Error adding task: " + err.getMessage());
             }
-
-
         }
     }
 }
