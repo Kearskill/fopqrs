@@ -1,4 +1,4 @@
-# Welcome to TaDaList! 
+# Welcome to TaDaList by group FOPQRS! 
 In this app, users will be able to 
 
 - Add Tasks
