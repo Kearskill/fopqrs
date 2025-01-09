@@ -149,19 +149,24 @@ public class ViewAllTask extends JPanel {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10); // Padding for components
 
+        // ** Task ID Label (Added) **
+        JLabel taskIdLabel = new JLabel("Task ID: " + task.id);
+        taskIdLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        addComponentToFrame(editorFrame, taskIdLabel, gbc, 0, 0, 2, 1);
+
         // Title Field
         JLabel titleLabel = new JLabel("Title:");
         JTextField titleField = new JTextField(task.title, 20);
-        addComponentToFrame(editorFrame, titleLabel, gbc, 0, 0, 1, 1);
-        addComponentToFrame(editorFrame, titleField, gbc, 1, 0, 2, 1);
+        addComponentToFrame(editorFrame, titleLabel, gbc, 0, 1, 1, 1);
+        addComponentToFrame(editorFrame, titleField, gbc, 1, 1, 2, 1);
 
         // Description Field
         JLabel descriptionLabel = new JLabel("Description:");
         JTextArea descriptionArea = new JTextArea(task.description, 5, 20);
         descriptionArea.setLineWrap(true);
         JScrollPane descriptionScroll = new JScrollPane(descriptionArea);
-        addComponentToFrame(editorFrame, descriptionLabel, gbc, 0, 1, 1, 1);
-        addComponentToFrame(editorFrame, descriptionScroll, gbc, 1, 1, 2, 1);
+        addComponentToFrame(editorFrame, descriptionLabel, gbc, 0, 2, 1, 1);
+        addComponentToFrame(editorFrame, descriptionScroll, gbc, 1, 2, 2, 1);
 
         // Due Date Field
         // Init
@@ -220,13 +225,13 @@ public class ViewAllTask extends JPanel {
 
 
         JLabel dueDateLabel = new JLabel("Due Date:");
-        addComponentToFrame(editorFrame, dueDateLabel, gbc, 0, 2, 1, 1);
+        addComponentToFrame(editorFrame, dueDateLabel, gbc, 0, 3, 1, 1);
 
         date = new JComboBox(dates);
         date.setFont(new Font("Arial", Font.PLAIN, 15));
         date.setSize(50, 20);
         date.setLocation(200, 300);
-        addComponentToFrame(editorFrame, date, gbc, 1, 2, 1, 1);
+        addComponentToFrame(editorFrame, date, gbc, 1, 3, 1, 1);
 
         // Ensure day is always in two-digit format
         String day = Integer.parseInt(a[2]) < 10 ? "0" + Integer.parseInt(a[2]) : a[2];
@@ -236,7 +241,7 @@ public class ViewAllTask extends JPanel {
         month.setFont(new Font("Arial", Font.PLAIN, 15));
         month.setSize(60, 20);
         month.setLocation(250, 300);
-        addComponentToFrame(editorFrame, month, gbc, 2, 2, 1, 1);
+        addComponentToFrame(editorFrame, month, gbc, 2, 3, 1, 1);
 
         if (monthStr != null) {
             month.setSelectedItem(monthStr);
@@ -251,7 +256,7 @@ public class ViewAllTask extends JPanel {
         year.setFont(new Font("Arial", Font.PLAIN, 15));
         year.setSize(60, 20);
         year.setLocation(320, 300);
-        addComponentToFrame(editorFrame, year, gbc, 3, 2, 1, 1);
+        addComponentToFrame(editorFrame, year, gbc, 3, 3, 1, 1);
 
         boolean yearFound = false;
         for (int i = 0; i < year.getItemCount(); i++) {
@@ -275,28 +280,28 @@ public class ViewAllTask extends JPanel {
         JLabel priorityLabel = new JLabel("Priority:");
         JComboBox<String> priorityBox = new JComboBox<>(new String[]{"Low", "Medium", "High"});
         priorityBox.setSelectedItem(task.priority);
-        addComponentToFrame(editorFrame, priorityLabel, gbc, 0, 3, 1, 1);
-        addComponentToFrame(editorFrame, priorityBox, gbc, 1, 3, 2, 1);
+        addComponentToFrame(editorFrame, priorityLabel, gbc, 0, 4, 1, 1);
+        addComponentToFrame(editorFrame, priorityBox, gbc, 1, 4, 2, 1);
 
         // Status Field
         JLabel statusLabel = new JLabel("Status:");
         JComboBox<String> statusBox = new JComboBox<>(new String[]{"Pending", "In Progress", "Completed"});
         statusBox.setSelectedItem(task.status);
-        addComponentToFrame(editorFrame, statusLabel, gbc, 0, 4, 1, 1);
-        addComponentToFrame(editorFrame, statusBox, gbc, 1, 4, 2, 1);
+        addComponentToFrame(editorFrame, statusLabel, gbc, 0, 5, 1, 1);
+        addComponentToFrame(editorFrame, statusBox, gbc, 1, 5, 2, 1);
 
         // Recurring Checkbox
         JLabel recurringLabel = new JLabel("Recurring:");
         JCheckBox isRecurringBox = new JCheckBox("", task.isRecurring);
-        addComponentToFrame(editorFrame, recurringLabel, gbc, 0, 5, 1, 1);
-        addComponentToFrame(editorFrame, isRecurringBox, gbc, 1, 5, 1, 1);
+        addComponentToFrame(editorFrame, recurringLabel, gbc, 0, 6, 1, 1);
+        addComponentToFrame(editorFrame, isRecurringBox, gbc, 1, 6, 1, 1);
 
         // Category Field
         JLabel categoryLabel = new JLabel("Category:");
         JComboBox<String> categoryBox = new JComboBox<>(new String[]{"Work", "Personal", "Others"});
         categoryBox.setSelectedItem(task.category);
-        addComponentToFrame(editorFrame, categoryLabel, gbc, 0, 6, 1, 1);
-        addComponentToFrame(editorFrame, categoryBox, gbc, 1, 6, 2, 1);
+        addComponentToFrame(editorFrame, categoryLabel, gbc, 0, 7, 1, 1);
+        addComponentToFrame(editorFrame, categoryBox, gbc, 1, 7, 2, 1);
 
         // Buttons (Save and Delete)
         JButton saveButton = new JButton("Save");
@@ -361,7 +366,7 @@ public class ViewAllTask extends JPanel {
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(saveButton);
         buttonPanel.add(deleteButton);
-        addComponentToFrame(editorFrame, buttonPanel, gbc, 0, 7, 3, 1);
+        addComponentToFrame(editorFrame, buttonPanel, gbc, 0, 8, 3, 1);
 
         editorFrame.setVisible(true);
     }
