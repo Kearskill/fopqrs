@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.tadalist.dao.fopqrs.TaskDAO.deleteTasks;
 
 public class ViewAllTask extends JPanel {
     private String dates[]

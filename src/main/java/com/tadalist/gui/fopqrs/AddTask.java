@@ -275,7 +275,7 @@ public class AddTask extends JPanel implements ActionListener {
             String prioritySQL = "";
             String statusSQL = "";
             String categorySQL = "";
-            String emailSQL = "";
+            String emailSQL = null;
             String data0
                     = "Title : "
                     + textFieldTitle.getText() + "\n"
