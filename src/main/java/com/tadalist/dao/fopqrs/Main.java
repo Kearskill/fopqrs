@@ -189,7 +189,7 @@ public class Main {
 
 
 
-    // Option 2: View All Tasks
+    // Option 2: View All Tasks1
     private static void viewAllTasks() {
         try {
             List<Tasks> taskList = TaskDAO.getAllTasks();

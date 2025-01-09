@@ -1,5 +1,6 @@
 package com.tadalist.gui.fopqrs;
 
+import com.tadalist.dao.fopqrs.EmailUtil;
 import com.tadalist.dao.fopqrs.TaskDAO;
 import com.tadalist.dao.fopqrs.Tasks;
 
@@ -7,15 +8,20 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.List;
+import java.util.TimerTask;
+
 
 public class AddTask extends JPanel implements ActionListener {
     private Container c;
-    private JLabel title, header, description, dueDate, priority, category, status, add, res;
-    private JTextField textFieldTitle, textFieldDescription;
+    private JLabel title, header, description, dueDate, priority, category, status, add, res, email;
+    private JTextField textFieldTitle, textFieldDescription, textFieldEmail;
     private JRadioButton low, medium, high, homework, personal, work, pending, completed;
     private ButtonGroup groupButtonPriority, groupButtonCategory, groupButtonStatus;
     private JComboBox date, month, year;
@@ -42,6 +48,7 @@ public class AddTask extends JPanel implements ActionListener {
             "2032", "2033", "2034", "2035"};
 
     public AddTask() {
+        startEmailReminderScheduler();
         setLayout(null);
 
         // Title
@@ -185,14 +192,14 @@ public class AddTask extends JPanel implements ActionListener {
 
         pending = new JRadioButton("Pending");
         pending.setFont(new Font("Arial", Font.PLAIN, 15));
-        pending.setSelected(true);
+        pending.setSelected(false);
         pending.setSize(75, 20);
         pending.setLocation(200, 350);
         add(pending);
 
         completed = new JRadioButton("Completed");
         completed.setFont(new Font("Arial", Font.PLAIN, 15));
-        completed.setSelected(false);
+        completed.setSelected(true);
         completed.setSize(80, 20);
         completed.setLocation(275, 350);
         add(completed);
@@ -201,11 +208,41 @@ public class AddTask extends JPanel implements ActionListener {
         groupButtonCategory.add(pending);
         groupButtonCategory.add(completed);
 
+        // Email where it is initially hidden
+        email = new JLabel("Email:");
+        email.setFont(new Font("Arial", Font.PLAIN, 20));
+        email.setSize(100, 20);
+        email.setLocation(100, 400);
+        email.setForeground(Color.BLUE);
+        email.setVisible(false); // Hide initially
+        add(email);
+
+        textFieldEmail = new JTextField();
+        textFieldEmail.setFont(new Font("Arial", Font.PLAIN, 15));
+        textFieldEmail.setSize(200, 20);
+        textFieldEmail.setLocation(200, 400);
+        textFieldEmail.setVisible(false); // Hide initially
+        add(textFieldEmail);
+
+        // Item listener hide or show email
+        pending.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (pending.isSelected()){
+                    email.setVisible(true);
+                    textFieldEmail.setVisible(true);
+                } else{
+                    email.setVisible(false);
+                    textFieldEmail.setVisible(false);
+                }
+            }
+        });
+
         // Buttons
         submit = new JButton("Submit");
         submit.setFont(new Font("Arial", Font.PLAIN, 15));
         submit.setSize(100, 20);
-        submit.setLocation(175, 400);
+        submit.setLocation(175, 450);
         submit.addActionListener(this);
         submit.setForeground(Color.blue);
         add(submit);
@@ -243,6 +280,7 @@ public class AddTask extends JPanel implements ActionListener {
             String prioritySQL = "";
             String statusSQL = "";
             String categorySQL = "";
+            String emailSQL = null;
             String data0
                     = "Title : "
                     + textFieldTitle.getText() + "\n"
@@ -276,7 +314,8 @@ public class AddTask extends JPanel implements ActionListener {
             }
 
             if (pending.isSelected()){
-                data3 = "Status : PENDING" + "\n";
+                emailSQL = textFieldEmail.getText();
+                data3 = "Status : PENDING" + "\nEmail:" + emailSQL +"\n" ;
                 statusSQL = "PENDING";
             }
             else if (completed.isSelected()) {
@@ -324,18 +363,55 @@ public class AddTask extends JPanel implements ActionListener {
             Tasks.Priority priority = Tasks.Priority.valueOf(prioritySQL.toUpperCase());
             Tasks.Category category = Tasks.Category.valueOf(categorySQL.toUpperCase());
             Tasks.Status status = Tasks.Status.valueOf(statusSQL.toUpperCase());
-//            try {
-//                Timestamp now = new Timestamp(System.currentTimeMillis());
-//
-//                Tasks task = new Tasks(0, titleSQL, descriptionSQL, dueDate, priority, status, now, now, (short) 0,
-//                        0, 0, category);
-//                TaskDAO.addTask(task);
-//                res.setText("Tasks Added Successfully with ID: " + task.getTaskId());
-//            } catch (SQLException | IllegalArgumentException err) {
-//                System.out.println("Error adding task: " + err.getMessage());
-//            }
+            try {
+                Timestamp now = new Timestamp(System.currentTimeMillis());
 
-
+                Tasks task = new Tasks(0, titleSQL, descriptionSQL, dueDate, priority, status, now, now, (short) 0,
+                        0, 0, category,emailSQL,true,false);
+                TaskDAO.addTask(task);
+                res.setText("Tasks Added Successfully with ID: " + task.getTaskId());
+            } catch (SQLException | IllegalArgumentException err) {
+                System.out.println("Error adding task: " + err.getMessage());
+            }
         }
+    }
+
+    private static void startEmailReminderScheduler() {
+        java.util.Timer timer = new java.util.Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    List<Tasks> taskList = TaskDAO.getAllTasks();
+                    long currentTimeMillis = System.currentTimeMillis();
+                    long twentyFourHoursInMillis = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
+                    for (Tasks task : taskList) {
+                        if (task.isEmailReminders() && task.getDueDate() != null && !task.isReminderSent()) {
+                            long dueDateMillis = task.getDueDate().getTime();
+
+                            // Check if the task is within 24 hours of being due
+                            if (dueDateMillis - currentTimeMillis <= twentyFourHoursInMillis &&
+                                    dueDateMillis - currentTimeMillis > 0) {
+                                sendEmailReminder(task);
+                                task.setReminderSent(true); // Update the flag in the object
+                                TaskDAO.updateReminderSent(task.getTaskId(), true); // Update the flag in the database
+                            }
+                        }
+                    }
+                } catch (SQLException e) {
+                    System.out.println("Error checking tasks for email reminders: " + e.getMessage());
+                }
+            }
+        }, 0, 60 * 60 * 1000); // Run every hour
+    }
+    private static void sendEmailReminder(Tasks task) {
+        String recipient = task.getEmail();
+        String subject = "Task Reminder: " + task.getTitle();
+        String body = "Hi,\n\nThis is a reminder that your task \"" + task.getTitle() +
+                "\" is due tomorrow (" + task.getDueDate() + "). Please complete it on time.\n\nTadaa,\nTaDaList Team";
+
+        EmailUtil.sendEmail(recipient, subject, body);
+        System.out.println("Email reminder sent for task: " + task.getTitle());
     }
 }

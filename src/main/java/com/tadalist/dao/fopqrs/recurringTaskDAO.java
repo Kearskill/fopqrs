@@ -94,6 +94,25 @@ public class recurringTaskDAO {
         return null;
     }
 
+    // Getting a specific recurring task by ID
+    public static List<recurringTask> getAllRecurringTasks() throws SQLException {
+        List<recurringTask> tasks = new ArrayList<>();  // List to store all tasks
+        String sql = "SELECT * FROM recurringtask";
+
+        try (Connection conn = dbConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    recurringTask task = mapResultSetToRecurringTask(rs); // Map ResultSet to task
+                    tasks.add(task);  // Add task to the list
+                }
+            }
+        }
+        return tasks;  // Return the list of tasks
+    }
+
+
     // Mapping a ResultSet to a recurringTask object
     private static recurringTask mapResultSetToRecurringTask(ResultSet rs) throws SQLException {
         return new recurringTask(
