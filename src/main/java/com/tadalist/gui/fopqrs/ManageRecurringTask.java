@@ -1,18 +1,20 @@
 package com.tadalist.gui.fopqrs;
-import com.tadalist.dao.fopqrs.recurringTask;
 import com.tadalist.dao.fopqrs.recurringTaskDAO;
+import com.tadalist.dao.fopqrs.recurringTask;
+
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
-import java.util.Scanner;
+import java.util.List;
 
 public class ManageRecurringTask extends JPanel {
     private JButton addButton;
     private JButton deleteButton;
     private JButton editButton;
+    private JButton refreshButton;  // New refresh button
     private JTextArea taskArea;
 
     public ManageRecurringTask() {
@@ -28,15 +30,17 @@ public class ManageRecurringTask extends JPanel {
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout());
 
-        // Add buttons for Add, Delete, and Edit
+        // Add buttons for Add, Delete, Edit, and Refresh
         addButton = new JButton("Add Recurring Task");
         deleteButton = new JButton("Delete Recurring Task");
         editButton = new JButton("Edit Recurring Task");
+        refreshButton = new JButton("Refresh Task List");  // Initialize refresh button
 
         // Add buttons to the panel
         buttonPanel.add(addButton);
         buttonPanel.add(deleteButton);
         buttonPanel.add(editButton);
+        buttonPanel.add(refreshButton);  // Add refresh button to the panel
 
         this.add(buttonPanel, BorderLayout.SOUTH);
 
@@ -67,6 +71,14 @@ public class ManageRecurringTask extends JPanel {
                 showEditTaskDialog();
             }
         });
+
+        // Action listener for the Refresh button
+        refreshButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                refreshTaskList();
+            }
+        });
     }
 
     // Method to show the Add Task Dialog
@@ -92,6 +104,7 @@ public class ManageRecurringTask extends JPanel {
                 recurringTaskDAO.addRecurringTask(task);
 
                 JOptionPane.showMessageDialog(null, "Recurring task successfully added with Task ID of " + task.getRecurringID());
+                refreshTaskList();  // Refresh the task list after adding a new task
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Error adding recurring task: " + e.getMessage());
             }
@@ -107,6 +120,7 @@ public class ManageRecurringTask extends JPanel {
                 int recurringID = Integer.parseInt(recurringIDString);
                 recurringTaskDAO.deleteRecurringTask(recurringID);
                 JOptionPane.showMessageDialog(null, "Recurring Task deleted successfully!");
+                refreshTaskList();  // Refresh the task list after deleting a task
             } catch (SQLException e) {
                 JOptionPane.showMessageDialog(null, "Error deleting task: " + e.getMessage());
             } catch (NumberFormatException e) {
@@ -149,6 +163,7 @@ public class ManageRecurringTask extends JPanel {
 
                         recurringTaskDAO.updateRecurringTask(task);
                         JOptionPane.showMessageDialog(null, "Recurring Task updated successfully!");
+                        refreshTaskList();  // Refresh the task list after editing a task
                     }
                 } else {
                     JOptionPane.showMessageDialog(null, "Task not found.");
@@ -161,8 +176,22 @@ public class ManageRecurringTask extends JPanel {
         }
     }
 
-    // Method to update the task display area (just for testing purposes)
-    public void updateTaskArea(String tasks) {
-        taskArea.setText(tasks);
+    // Method to refresh the task list and update the JTextArea
+    private void refreshTaskList() {
+        try {
+            List<recurringTask> tasks = recurringTaskDAO.getAllRecurringTasks();
+            StringBuilder taskListText = new StringBuilder();
+
+            for (recurringTask task : tasks) {
+                taskListText.append("Task ID: ").append(task.getRecurringID()).append("\n")
+                        .append("Title: ").append(task.getTitle()).append("\n")
+                        .append("Description: ").append(task.getDescription()).append("\n")
+                        .append("Recurrence Type: ").append(task.getRecurrenceType()).append("\n\n");
+            }
+
+            taskArea.setText(taskListText.toString());
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error fetching tasks: " + e.getMessage());
+        }
     }
 }

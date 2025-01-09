@@ -1,5 +1,6 @@
 package com.tadalist.gui.fopqrs;
 
+import com.tadalist.dao.fopqrs.EmailUtil;
 import com.tadalist.dao.fopqrs.TaskDAO;
 import com.tadalist.dao.fopqrs.Tasks;
 
@@ -13,6 +14,9 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.List;
+import java.util.TimerTask;
+
 
 public class AddTask extends JPanel implements ActionListener {
     private Container c;
@@ -44,6 +48,7 @@ public class AddTask extends JPanel implements ActionListener {
             "2032", "2033", "2034", "2035"};
 
     public AddTask() {
+        startEmailReminderScheduler();
         setLayout(null);
 
         // Title
@@ -369,5 +374,44 @@ public class AddTask extends JPanel implements ActionListener {
                 System.out.println("Error adding task: " + err.getMessage());
             }
         }
+    }
+
+    private static void startEmailReminderScheduler() {
+        java.util.Timer timer = new java.util.Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    List<Tasks> taskList = TaskDAO.getAllTasks();
+                    long currentTimeMillis = System.currentTimeMillis();
+                    long twentyFourHoursInMillis = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
+                    for (Tasks task : taskList) {
+                        if (task.isEmailReminders() && task.getDueDate() != null && !task.isReminderSent()) {
+                            long dueDateMillis = task.getDueDate().getTime();
+
+                            // Check if the task is within 24 hours of being due
+                            if (dueDateMillis - currentTimeMillis <= twentyFourHoursInMillis &&
+                                    dueDateMillis - currentTimeMillis > 0) {
+                                sendEmailReminder(task);
+                                task.setReminderSent(true); // Update the flag in the object
+                                TaskDAO.updateReminderSent(task.getTaskId(), true); // Update the flag in the database
+                            }
+                        }
+                    }
+                } catch (SQLException e) {
+                    System.out.println("Error checking tasks for email reminders: " + e.getMessage());
+                }
+            }
+        }, 0, 60 * 60 * 1000); // Run every hour
+    }
+    private static void sendEmailReminder(Tasks task) {
+        String recipient = task.getEmail();
+        String subject = "Task Reminder: " + task.getTitle();
+        String body = "Hi,\n\nThis is a reminder that your task \"" + task.getTitle() +
+                "\" is due tomorrow (" + task.getDueDate() + "). Please complete it on time.\n\nTadaa,\nTaDaList Team";
+
+        EmailUtil.sendEmail(recipient, subject, body);
+        System.out.println("Email reminder sent for task: " + task.getTitle());
     }
 }
