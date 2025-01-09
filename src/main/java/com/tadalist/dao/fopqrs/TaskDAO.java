@@ -6,8 +6,9 @@ import java.util.List;
 //PreparedStatement -> for inserting values in database
 public class TaskDAO {
     public static void addTask(Tasks Tasks) throws SQLException {
-        String sql = "INSERT INTO tasks(Title, Description, DueDate, Priority, Status, CreatedAt," +
-                "UpdatedAt, IsRecurring, ParentTaskID, StreakCount, Category) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO tasks (Title, Description, DueDate, Priority, Status, CreatedAt, UpdatedAt, " +
+                "IsRecurring, ParentTaskID, StreakCount, Category, Email, EmailReminders, ReminderSent) " +
+                "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
         try (Connection conn = dbConnection.getConnection()) {
             // ParentTaskID validation
@@ -44,6 +45,10 @@ public class TaskDAO {
                 stmt.setInt(10, Tasks.getStreakCount());
                 stmt.setString(11, Tasks.getCategory().name());
 
+                stmt.setString(12, Tasks.getEmail());
+                stmt.setBoolean(13, Tasks.isEmailReminders());
+                stmt.setBoolean(14, false);
+
                 stmt.executeUpdate();
 
                 // Retrieve Generated Keys
@@ -56,10 +61,21 @@ public class TaskDAO {
         }
     }
 
+    public static void updateReminderSent(int taskId, boolean reminderSent) throws SQLException {
+        String sql = "UPDATE tasks SET ReminderSent = ? WHERE TaskID = ?";
+        try (Connection conn = dbConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setBoolean(1, reminderSent);
+            stmt.setInt(2, taskId);
+            stmt.executeUpdate();
+        }
+    }
 
     public static void editTask(Tasks Tasks) throws SQLException{
-        String sql = "UPDATE tasks SET Title=?, Description=?, DueDate=?, Priority=?, Status=?," +
-                "CreatedAt=?,UpdatedAt=?, IsRecurring=?, ParentTaskID=?, StreakCount=?, Category=? WHERE TaskId=?";
+        String sql = "UPDATE tasks SET Title = ?, Description = ?, DueDate = ?, Priority = ?, Status = ?, " +
+                "CreatedAt = ?, UpdatedAt = ?, IsRecurring = ?, ParentTaskID = ?, StreakCount = ?, " +
+                "Category = ?, Email = ?, EmailReminders = ?, ReminderSent = ? WHERE TaskID = ?";
+
         try(Connection conn = dbConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS)) {
 
@@ -75,6 +91,9 @@ public class TaskDAO {
             stmt.setInt(10,Tasks.getStreakCount());
             stmt.setString(11,Tasks.getCategory().name());
             stmt.setInt(12, Tasks.getTaskId());
+            stmt.setString(13, Tasks.getEmail());
+            stmt.setBoolean(14, Tasks.isEmailReminders());
+            stmt.setBoolean(15, Tasks.isReminderSent());
             stmt.executeUpdate();
 
         }
@@ -115,7 +134,10 @@ public class TaskDAO {
                 rs.getShort("IsRecurring"),
                 rs.getInt("ParentTaskID"),
                 rs.getInt("StreakCount"),
-                Tasks.Category.valueOf(rs.getString("Category").toUpperCase())
+                Tasks.Category.valueOf(rs.getString("Category").toUpperCase()),
+                rs.getString("Email"),
+                rs.getBoolean("EmailReminders"),
+                rs.getBoolean("ReminderSent")
         );
     }
 
@@ -132,7 +154,10 @@ public class TaskDAO {
                 rs.getShort("IsRecurring"),
                 rs.getInt("ParentTaskID"),
                 rs.getInt("StreakCount"),
-                Tasks.Category.valueOf(rs.getString("Category"))
+                Tasks.Category.valueOf(rs.getString("Category")),
+                rs.getString("Email"), // Fetch Email from ResultSet
+                rs.getBoolean("EmailReminders"),
+                rs.getBoolean("ReminderSent")
         );
     }
 

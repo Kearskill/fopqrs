@@ -1,7 +1,8 @@
-package com.tadalist;
+package com.tadalist.dao.fopqrs;
 
 import com.tadalist.dao.fopqrs.TaskDAO;
 import com.tadalist.dao.fopqrs.Tasks;
+import com.tadalist.dao.fopqrs.EmailUtil;
 import com.tadalist.dao.fopqrs.recurringTaskDAO;
 import com.tadalist.dao.fopqrs.recurringTask;
 import com.tadalist.dao.fopqrs.TaskDependency;
@@ -16,10 +17,15 @@ import java.util.Scanner;
 import java.util.HashMap;
 import java.util.Map;
 import java.sql.*;
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         boolean exit = false;
+
+        startEmailReminderScheduler();
 
         while (!exit) {
             // Display menu options
@@ -112,21 +118,84 @@ public class Main {
             Tasks.Priority priority = Tasks.Priority.valueOf(scanner.nextLine().toUpperCase());
 
             System.out.print("Category (HOMEWORK, PERSONAL, WORK): ");
-            Tasks.Category Category = Tasks.Category.valueOf(scanner.nextLine().toUpperCase());
+            Tasks.Category category = Tasks.Category.valueOf(scanner.nextLine().toUpperCase());
 
             System.out.print("Status (PENDING, COMPLETED): ");
             Tasks.Status status = Tasks.Status.valueOf(scanner.nextLine().toUpperCase());
 
+            boolean emailReminders = false;
+            String email = null;
+
+            // Set email reminders only if status is PENDING
+            if (status == Tasks.Status.PENDING) {
+                System.out.print("Do you want email reminders for this task? (Yes/No): ");
+                emailReminders = scanner.nextLine().equalsIgnoreCase("yes");
+
+                if (emailReminders) {
+                    System.out.print("Enter your email address: ");
+                    email = scanner.nextLine();
+                }
+            } else {
+                System.out.println("Task is marked as COMPLETED, so email reminders will not be set.");
+            }
+
             Timestamp now = new Timestamp(System.currentTimeMillis());
 
-            Tasks task = new Tasks(0, title, description, dueDate, priority, status, now, now, (short) 0,
-                    0, 0, Category);
+            Tasks task = new Tasks(
+                    0, title, description, dueDate, priority, status, now, now,
+                    (short) 0, 0, 0, category, email, emailReminders, false
+            );
+
             TaskDAO.addTask(task);
             System.out.println("Task added successfully with ID: " + task.getTaskId());
         } catch (SQLException | IllegalArgumentException e) {
             System.out.println("Error adding task: " + e.getMessage());
         }
     }
+
+    // Schedule Email Reminders (tasks due within 24 hours)
+    private static void startEmailReminderScheduler() {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    List<Tasks> taskList = TaskDAO.getAllTasks();
+                    long currentTimeMillis = System.currentTimeMillis();
+                    long twentyFourHoursInMillis = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
+                    for (Tasks task : taskList) {
+                        if (task.isEmailReminders() && task.getDueDate() != null && !task.isReminderSent()) {
+                            long dueDateMillis = task.getDueDate().getTime();
+
+                            // Check if the task is within 24 hours of being due
+                            if (dueDateMillis - currentTimeMillis <= twentyFourHoursInMillis &&
+                                    dueDateMillis - currentTimeMillis > 0) {
+                                sendEmailReminder(task);
+                                task.setReminderSent(true); // Update the flag in the object
+                                TaskDAO.updateReminderSent(task.getTaskId(), true); // Update the flag in the database
+                            }
+                        }
+                    }
+                } catch (SQLException e) {
+                    System.out.println("Error checking tasks for email reminders: " + e.getMessage());
+                }
+            }
+        }, 0, 60 * 60 * 1000); // Run every hour
+    }
+
+
+    private static void sendEmailReminder(Tasks task) {
+        String recipient = task.getEmail();
+        String subject = "Task Reminder: " + task.getTitle();
+        String body = "Hi,\n\nThis is a reminder that your task \"" + task.getTitle() +
+                "\" is due tomorrow (" + task.getDueDate() + "). Please complete it on time.\n\nTadaa,\nTaDaList Team";
+
+        EmailUtil.sendEmail(recipient, subject, body);
+        System.out.println("Email reminder sent for task: " + task.getTitle());
+    }
+
+
 
     // Option 2: View All Tasks
     private static void viewAllTasks() {
@@ -171,6 +240,12 @@ public class Main {
             existingTask.setDescription(description);
             existingTask.setDueDate(dueDate);
             existingTask.setUpdatedAt(now);
+
+            // Reset ReminderSent if DueDate is updated
+            if (!existingTask.getDueDate().equals(dueDate)) {
+                existingTask.setReminderSent(false);
+                TaskDAO.updateReminderSent(existingTask.getTaskId(), false);
+            }
 
             TaskDAO.editTask(existingTask);
             System.out.println("Task updated successfully!");
@@ -528,7 +603,7 @@ public class Main {
     private static Connection getConnection() throws SQLException {
         String url = "jdbc:mysql://localhost:3306/realtadalist_db";
         String username = "root";
-        String password = "localroot";
+        String password = "yzlwzx";
         return DriverManager.getConnection(url, username, password);
     }
 }

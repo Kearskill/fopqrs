@@ -25,15 +25,17 @@ public class Tasks {
     private Status status;
     private Timestamp CreatedAt;
     private Timestamp UpdatedAt;
+    private String Email;
+    private boolean EmailReminders;
     private short IsRecurring;//boolean
     private int ParentTaskID;
     private int StreakCount;
-
+    private boolean ReminderSent;
 
     //Add Task ID later on
     public Tasks(int TaskId,String Title,String Description,Date DueDate,Priority priority,Status status,
                  Timestamp CreatedAt, Timestamp UpdatedAt,short IsRecurring,
-                 int ParentTaskID,int StreakCount, Category Category){
+                 int ParentTaskID,int StreakCount, Category Category, String Email, boolean EmailReminders, boolean ReminderSent){
         this.TaskId = TaskId;
         this.Title = Title;
         this.Description = Description;
@@ -46,6 +48,9 @@ public class Tasks {
         this.status = status;
         this.priority = priority;
         this.Category = Category;
+        this.Email = Email;
+        this.EmailReminders = EmailReminders;
+        this.ReminderSent = ReminderSent;
     }
 
     public Tasks.Category getCategory() {
@@ -102,10 +107,15 @@ public class Tasks {
         return StreakCount;
     }
 
-
     public Status getStatus() {
         return status;
     }
+
+    public String getEmail() { return Email; }
+
+    public boolean isEmailReminders() { return EmailReminders; }
+
+    public boolean isReminderSent() { return ReminderSent; }
 //setters
 
 
@@ -144,6 +154,13 @@ public class Tasks {
         StreakCount = streakCount;
     }
 
+    public void setEmail(String email) { Email = email; }
+
+    public void setEmailReminders(boolean emailReminders) { EmailReminders = emailReminders; }
+
+    public void setReminderSent(boolean reminderSent) {
+        ReminderSent = reminderSent;
+    }
 
     @Override
     public String toString() {
@@ -159,6 +176,8 @@ public class Tasks {
                 ", StreakCount=" + StreakCount +
                 ", Priority='" + priority + '\'' +
                 ", status='" + status + '\'' +
+                ", Email='" + Email + '\'' +
+                ", EmailReminders=" + EmailReminders +
                 '}';
     }
 }
