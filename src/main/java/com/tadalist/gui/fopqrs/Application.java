@@ -37,7 +37,6 @@ public class Application {
         JPanel manageRecurringTask = new ManageRecurringTask();
         JPanel addTaskDependencies = new AddTaskDependencies();
         JPanel displayTaskCompletionRate = new DisplayTaskCompletionRate();
-        JPanel vectorSearch = new VectorSearch();
 
         // Add pages to the main panel
         mainPanel.add(addTask, "Page 1");
@@ -46,7 +45,6 @@ public class Application {
         mainPanel.add(manageRecurringTask, "Page 8");
         mainPanel.add(addTaskDependencies,"Page 9"); // 10
         mainPanel.add(displayTaskCompletionRate, "Page 11");
-        mainPanel.add(vectorSearch, "Page 12");
 
         // Create the menu panel with buttons
         JPanel menuPanel = createMenuPanel();
@@ -82,8 +80,6 @@ public class Application {
         addTaskDependencies.setToolTipText("Add Task Dependencies");
         JButton displayTaskCompletionRate = new JButton("Display Task Completion Rate");
         displayTaskCompletionRate.setToolTipText("Display Task completion rate");
-        JButton vectorSearch = new JButton("Vector Search for tasks");
-        vectorSearch.setToolTipText("Vector search for tasks");
 
         addTask.setPreferredSize(new Dimension(80, 20));
         viewAllTask.setPreferredSize(new Dimension(80, 20));
@@ -91,7 +87,6 @@ public class Application {
         manageRecurringTask.setPreferredSize(new Dimension(80, 20));
         addTaskDependencies.setPreferredSize(new Dimension(80, 20));
         displayTaskCompletionRate.setPreferredSize(new Dimension(80, 20));
-        vectorSearch.setPreferredSize(new Dimension(80, 20));
 
         // Add action listeners to switch between pages
         addTask.addActionListener(new ActionListener() {
@@ -137,12 +132,7 @@ public class Application {
             }
         });
 
-        vectorSearch.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cardLayout.show(mainPanel, "Page 12");
-            }
-        });
+
 
         // Add buttons to the menu panel
         menuPanel.add(addTask);
@@ -151,7 +141,6 @@ public class Application {
         menuPanel.add(manageRecurringTask);
         menuPanel.add(addTaskDependencies);
         menuPanel.add(displayTaskCompletionRate);
-        menuPanel.add(vectorSearch);
 
         return menuPanel;
     }
