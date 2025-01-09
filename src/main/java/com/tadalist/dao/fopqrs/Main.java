@@ -1,11 +1,4 @@
-package com.tadalist;
-
-import com.tadalist.dao.fopqrs.TaskDAO;
-import com.tadalist.dao.fopqrs.Tasks;
-import com.tadalist.dao.fopqrs.recurringTaskDAO;
-import com.tadalist.dao.fopqrs.recurringTask;
-import com.tadalist.dao.fopqrs.TaskDependency;
-import com.tadalist.dao.fopqrs.TaskDependencyDAO;
+package com.tadalist.dao.fopqrs;
 
 import java.sql.Connection;
 import java.sql.SQLException;
