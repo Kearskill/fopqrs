@@ -234,25 +234,34 @@ public class TaskDAO {
         return taskList;
     }
     //Sort Task
-    public static List<Tasks> getTasksSorted(String sortBy, boolean ascending) throws SQLException{
+    public static List<Tasks> getTasksSorted(String sortBy, boolean ascending) throws SQLException {
         List<String> allowedSortColumns = List.of("DueDate", "Priority", "Category");
         if (!allowedSortColumns.contains(sortBy)) {
             throw new IllegalArgumentException("Invalid sorting column: " + sortBy);
         }
+
         List<Tasks> taskList = new ArrayList<>();
-        String order = ascending ? "asc":"desc";
-        String query = "select * from Tasks order by DueDate " + order;
+        String order = ascending ? "ASC" : "DESC";
+        String query;
 
-        try(Connection conn = dbConnection.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(query);
-            ResultSet rs = stmt.executeQuery()){
+        // Special handling for Priority sorting
+        if ("Priority".equals(sortBy)) {
+            query = "SELECT * FROM Tasks ORDER BY FIELD(Priority, 'Low', 'Medium', 'High') " + order;
+        } else {
+            query = "SELECT * FROM Tasks ORDER BY " + sortBy + " " + order;
+        }
 
-            while(rs.next()){
+        try (Connection conn = dbConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
                 taskList.add(mapResultSetToTask(rs));
             }
         }
         return taskList;
     }
+
 
 }
 
