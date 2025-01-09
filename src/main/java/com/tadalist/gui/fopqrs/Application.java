@@ -33,14 +33,9 @@ public class Application {
         // Create instances of page classes
         JPanel addTask = new AddTask();  // Page1 instance
         JPanel viewAllTasks = new ViewAllTask();  // Page2 instance
-        JPanel editTask = new EditTask();
-        JPanel deleteTask = new DeleteTask();
-        JPanel viewTaskByID = new ViewTaskByID();
         JPanel sortTask = new SortTask();
-        JPanel searchTask = new SearchTask();
         JPanel manageRecurringTask = new ManageRecurringTask();
         JPanel addTaskDependencies = new AddTaskDependencies();
-        JPanel markTaskAsComplete = new MarkTaskAsComplete();
         JPanel displayTaskCompletionRate = new DisplayTaskCompletionRate();
         JPanel vectorSearch = new VectorSearch();
 

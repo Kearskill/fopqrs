@@ -185,14 +185,14 @@ public class AddTask extends JPanel implements ActionListener {
 
         pending = new JRadioButton("Pending");
         pending.setFont(new Font("Arial", Font.PLAIN, 15));
-        pending.setSelected(true);
+        pending.setSelected(false);
         pending.setSize(75, 20);
         pending.setLocation(200, 350);
         add(pending);
 
         completed = new JRadioButton("Completed");
         completed.setFont(new Font("Arial", Font.PLAIN, 15));
-        completed.setSelected(false);
+        completed.setSelected(true);
         completed.setSize(80, 20);
         completed.setLocation(275, 350);
         add(completed);
