@@ -76,12 +76,19 @@ public class Application {
 
         // Buttons for navigation
         JButton addTask = new JButton("Add New Tasks");
+        addTask.setToolTipText("Add new task");
         JButton viewAllTask = new JButton("View All Tasks");
+        viewAllTask.setToolTipText("View All Tasks");
         JButton sortTask = new JButton("Sort Task");
+        sortTask.setToolTipText("Sort Task");
         JButton manageRecurringTask = new JButton("Manage recurring task");
+        manageRecurringTask.setToolTipText("Manage recurring text");
         JButton addTaskDependencies = new JButton("Add Task Dependencies");
+        addTaskDependencies.setToolTipText("Add Task Dependencies");
         JButton displayTaskCompletionRate = new JButton("Display Task Completion Rate");
+        displayTaskCompletionRate.setToolTipText("Display Task completion rate");
         JButton vectorSearch = new JButton("Vector Search for tasks");
+        vectorSearch.setToolTipText("Vector search for tasks");
 
         addTask.setPreferredSize(new Dimension(80, 20));
         viewAllTask.setPreferredSize(new Dimension(80, 20));
