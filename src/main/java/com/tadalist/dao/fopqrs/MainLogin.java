@@ -2,7 +2,6 @@ package com.tadalist.dao.fopqrs;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Scanner;
-import java.io.Console;
 
 public class MainLogin {
     public static void main(String[] args) {
