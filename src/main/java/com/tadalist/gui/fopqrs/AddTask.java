@@ -7,6 +7,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -14,8 +16,8 @@ import java.util.HashMap;
 
 public class AddTask extends JPanel implements ActionListener {
     private Container c;
-    private JLabel title, header, description, dueDate, priority, category, status, add, res;
-    private JTextField textFieldTitle, textFieldDescription;
+    private JLabel title, header, description, dueDate, priority, category, status, add, res, email;
+    private JTextField textFieldTitle, textFieldDescription, textFieldEmail;
     private JRadioButton low, medium, high, homework, personal, work, pending, completed;
     private ButtonGroup groupButtonPriority, groupButtonCategory, groupButtonStatus;
     private JComboBox date, month, year;
@@ -201,11 +203,41 @@ public class AddTask extends JPanel implements ActionListener {
         groupButtonCategory.add(pending);
         groupButtonCategory.add(completed);
 
+        // Email where it is initially hidden
+        email = new JLabel("Email:");
+        email.setFont(new Font("Arial", Font.PLAIN, 20));
+        email.setSize(100, 20);
+        email.setLocation(100, 400);
+        email.setForeground(Color.BLUE);
+        email.setVisible(false); // Hide initially
+        add(email);
+
+        textFieldEmail = new JTextField();
+        textFieldEmail.setFont(new Font("Arial", Font.PLAIN, 15));
+        textFieldEmail.setSize(200, 20);
+        textFieldEmail.setLocation(200, 400);
+        textFieldEmail.setVisible(false); // Hide initially
+        add(textFieldEmail);
+
+        // Item listener hide or show email
+        pending.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (pending.isSelected()){
+                    email.setVisible(true);
+                    textFieldEmail.setVisible(true);
+                } else{
+                    email.setVisible(false);
+                    textFieldEmail.setVisible(false);
+                }
+            }
+        });
+
         // Buttons
         submit = new JButton("Submit");
         submit.setFont(new Font("Arial", Font.PLAIN, 15));
         submit.setSize(100, 20);
-        submit.setLocation(175, 400);
+        submit.setLocation(175, 450);
         submit.addActionListener(this);
         submit.setForeground(Color.blue);
         add(submit);
