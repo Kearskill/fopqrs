@@ -1,13 +1,5 @@
 package com.tadalist.dao.fopqrs;
 
-import com.tadalist.dao.fopqrs.TaskDAO;
-import com.tadalist.dao.fopqrs.Tasks;
-import com.tadalist.dao.fopqrs.EmailUtil;
-import com.tadalist.dao.fopqrs.recurringTaskDAO;
-import com.tadalist.dao.fopqrs.recurringTask;
-import com.tadalist.dao.fopqrs.TaskDependency;
-import com.tadalist.dao.fopqrs.TaskDependencyDAO;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Date;
@@ -603,7 +595,7 @@ public class Main {
     private static Connection getConnection() throws SQLException {
         String url = "jdbc:mysql://localhost:3306/realtadalist_db";
         String username = "root";
-        String password = "yzlwzx";
+        String password = "localroot";
         return DriverManager.getConnection(url, username, password);
     }
 }

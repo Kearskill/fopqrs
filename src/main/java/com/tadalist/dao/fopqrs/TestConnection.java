@@ -7,7 +7,7 @@ public class TestConnection {
     public static void main(String[] args) {
         String url = "jdbc:mysql://localhost:3306/realtadalist_db"; // replace according to schema
         String user = "root";
-        String password = "yzlwzx";
+        String password = "localroot";
 
         try {
             // Load MySQL JDBC Driver

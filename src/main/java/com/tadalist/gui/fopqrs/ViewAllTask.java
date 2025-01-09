@@ -221,7 +221,6 @@ public class ViewAllTask extends JPanel {
 
 
         JLabel dueDateLabel = new JLabel("Due Date:");
-//        JTextField dueDateField = new JTextField(task.dueDate);
         addComponentToFrame(editorFrame, dueDateLabel, gbc, 0, 2, 1, 1);
 
         date = new JComboBox(dates);
