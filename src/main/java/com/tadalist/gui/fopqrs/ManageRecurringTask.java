@@ -1,3 +1,4 @@
+
 package com.tadalist.gui.fopqrs;
 import com.tadalist.dao.fopqrs.recurringTaskDAO;
 import com.tadalist.dao.fopqrs.recurringTask;
@@ -20,6 +21,8 @@ public class ManageRecurringTask extends JPanel {
     public ManageRecurringTask() {
         // Set layout for the panel
         this.setLayout(new BorderLayout());
+
+
 
         // Create a title label
         JLabel label = new JLabel("Manage Recurring Tasks", SwingConstants.CENTER);
@@ -49,6 +52,9 @@ public class ManageRecurringTask extends JPanel {
         taskArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(taskArea);
         this.add(scrollPane, BorderLayout.CENTER);
+
+        // Load
+        refreshTaskList();
 
         // Action listeners for the buttons
         addButton.addActionListener(new ActionListener() {

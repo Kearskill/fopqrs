@@ -278,17 +278,17 @@ public class ViewAllTask extends JPanel {
 
         // Priority Field
         JLabel priorityLabel = new JLabel("Priority:");
-        JComboBox<String> priorityBox = new JComboBox<>(new String[]{"Low", "Medium", "High"});
-        priorityBox.setSelectedItem(task.priority);
+        JComboBox<String> priorityBox = new JComboBox<>(new String[]{"LOW", "MEDIUM", "HIGH"});
         addComponentToFrame(editorFrame, priorityLabel, gbc, 0, 4, 1, 1);
         addComponentToFrame(editorFrame, priorityBox, gbc, 1, 4, 2, 1);
+        priorityBox.setSelectedItem(task.priority);
 
         // Status Field
         JLabel statusLabel = new JLabel("Status:");
-        JComboBox<String> statusBox = new JComboBox<>(new String[]{"Pending", "In Progress", "Completed"});
-        statusBox.setSelectedItem(task.status);
+        JComboBox<String> statusBox = new JComboBox<>(new String[]{"PENDING", "IN PROGRESS", "COMPLETED"});
         addComponentToFrame(editorFrame, statusLabel, gbc, 0, 5, 1, 1);
         addComponentToFrame(editorFrame, statusBox, gbc, 1, 5, 2, 1);
+        statusBox.setSelectedItem(task.status);
 
         // Recurring Checkbox
         JLabel recurringLabel = new JLabel("Recurring:");
@@ -298,10 +298,10 @@ public class ViewAllTask extends JPanel {
 
         // Category Field
         JLabel categoryLabel = new JLabel("Category:");
-        JComboBox<String> categoryBox = new JComboBox<>(new String[]{"Work", "Personal", "Others"});
-        categoryBox.setSelectedItem(task.category);
+        JComboBox<String> categoryBox = new JComboBox<>(new String[]{"WORK", "PERSONAL", "HOMEWORK"});
         addComponentToFrame(editorFrame, categoryLabel, gbc, 0, 7, 1, 1);
         addComponentToFrame(editorFrame, categoryBox, gbc, 1, 7, 2, 1);
+        categoryBox.setSelectedItem(task.category);
 
         // Buttons (Save and Delete)
         JButton saveButton = new JButton("Save");
