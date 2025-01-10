@@ -53,7 +53,7 @@ public class AddTask extends JPanel implements ActionListener {
             "2032", "2033", "2034", "2035"};
 
     public AddTask() {
-//        startEmailReminderScheduler();
+        startEmailReminderScheduler();
         setLayout(null);
 
         setBackground(new Color(237, 231, 229));
