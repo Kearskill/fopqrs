@@ -13,5 +13,5 @@ In this app, users will be able to
 - Mark Task As Complete
 - Exit
 
-mysql password change
+To use this file, make sure to change your mysql password first. Below is the code that will automatically change your password on mysql as to ease connection issues.
 `ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'localroot';`
