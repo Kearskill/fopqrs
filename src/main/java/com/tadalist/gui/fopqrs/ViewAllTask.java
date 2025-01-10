@@ -293,10 +293,12 @@ public class ViewAllTask extends JPanel {
         addComponentToFrame(editorFrame, statusBox, gbc, 1, 5, 2, 1);
         statusBox.setSelectedItem(task.status);
 
+// Check for dependencies before allowing completion
         // Check for dependencies before allowing completion
         if (statusBox.getSelectedItem().equals("COMPLETED")) {
-            TaskDependencyDAO dependencyDAO = new TaskDependencyDAO(dbConnection.getConnection());
-            try {
+            try (Connection conn = dbConnection.getConnection());
+                 TaskDependencyDAO dependencyDAO = new TaskDependencyDAO(conn)) {
+
                 List<TaskDependency> dependencies = dependencyDAO.getTaskDependenciesByTaskId(task.id);
                 for (TaskDependency dependency : dependencies) {
                     int dependentTaskId = dependency.getDependentTaskId();
@@ -312,6 +314,7 @@ public class ViewAllTask extends JPanel {
                 return;
             }
         }
+
 
 
 
