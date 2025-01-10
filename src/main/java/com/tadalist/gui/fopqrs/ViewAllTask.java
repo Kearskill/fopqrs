@@ -1,6 +1,9 @@
 package com.tadalist.gui.fopqrs;
 
 import com.tadalist.dao.fopqrs.TaskDAO;
+import com.tadalist.dao.fopqrs.Tasks;
+import com.tadalist.dao.fopqrs.TaskDependencyDAO;
+import com.tadalist.dao.fopqrs.TaskDependency;
 import com.tadalist.dao.fopqrs.dbConnection;
 
 import javax.swing.*;
@@ -289,6 +292,28 @@ public class ViewAllTask extends JPanel {
         addComponentToFrame(editorFrame, statusLabel, gbc, 0, 5, 1, 1);
         addComponentToFrame(editorFrame, statusBox, gbc, 1, 5, 2, 1);
         statusBox.setSelectedItem(task.status);
+
+        // Check for dependencies before allowing completion
+        if (statusBox.getSelectedItem().equals("COMPLETED")) {
+            TaskDependencyDAO dependencyDAO = new TaskDependencyDAO(dbConnection.getConnection());
+            try {
+                List<TaskDependency> dependencies = dependencyDAO.getTaskDependenciesByTaskId(task.id);
+                for (TaskDependency dependency : dependencies) {
+                    int dependentTaskId = dependency.getDependentTaskId();
+                    Tasks dependentTask = TaskDAO.getTaskById(dependentTaskId);
+                    if (dependentTask != null && dependentTask.getStatus().equals(Tasks.Status.PENDING)) {
+                        JOptionPane.showMessageDialog(null, "Cannot mark task as completed because dependent tasks are still pending: " + dependentTaskId, "Dependency Error", JOptionPane.ERROR_MESSAGE);
+                        return; // Prevents saving if dependencies are pending
+                    }
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Error checking task dependencies.", "Database Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        }
+
+
 
         // Recurring Checkbox
         JLabel recurringLabel = new JLabel("Recurring:");
