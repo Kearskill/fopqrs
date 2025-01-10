@@ -10,7 +10,7 @@ public class dbConnection {
     // Connect to Database
     public static String url = "jdbc:mysql://localhost:3306/realtadalist_db"; //change abd to whichever schema youre using
     public static String user = "root";
-    public static String password = "localroot";
+    public static String password = "tunafish1610";
 
     public static Connection getConnection() throws SQLException{
         try{

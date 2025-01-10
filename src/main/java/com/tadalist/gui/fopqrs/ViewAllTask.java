@@ -45,7 +45,7 @@ public class ViewAllTask extends JPanel {
 
         // Title
         JLabel title = new JLabel("View All Tasks", SwingConstants.CENTER);
-        title.setFont(new Font("Arial", Font.BOLD, 24));
+        title.setFont(new Font("Roboto", Font.BOLD, 24));
         add(title, BorderLayout.NORTH);
 
         // Search bar
@@ -151,7 +151,7 @@ public class ViewAllTask extends JPanel {
 
         // ** Task ID Label (Added) **
         JLabel taskIdLabel = new JLabel("Task ID: " + task.id);
-        taskIdLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        taskIdLabel.setFont(new Font("Roboto", Font.BOLD, 14));
         addComponentToFrame(editorFrame, taskIdLabel, gbc, 0, 0, 2, 1);
 
         // Title Field
@@ -228,7 +228,7 @@ public class ViewAllTask extends JPanel {
         addComponentToFrame(editorFrame, dueDateLabel, gbc, 0, 3, 1, 1);
 
         date = new JComboBox(dates);
-        date.setFont(new Font("Arial", Font.PLAIN, 15));
+        date.setFont(new Font("Roboto", Font.PLAIN, 15));
         date.setSize(50, 20);
         date.setLocation(200, 300);
         addComponentToFrame(editorFrame, date, gbc, 1, 3, 1, 1);
@@ -238,7 +238,7 @@ public class ViewAllTask extends JPanel {
         date.setSelectedItem(day);
 
         month = new JComboBox(months);
-        month.setFont(new Font("Arial", Font.PLAIN, 15));
+        month.setFont(new Font("Roboto", Font.PLAIN, 15));
         month.setSize(60, 20);
         month.setLocation(250, 300);
         addComponentToFrame(editorFrame, month, gbc, 2, 3, 1, 1);
@@ -253,7 +253,7 @@ public class ViewAllTask extends JPanel {
 
 
         year = new JComboBox(years);
-        year.setFont(new Font("Arial", Font.PLAIN, 15));
+        year.setFont(new Font("Roboto", Font.PLAIN, 15));
         year.setSize(60, 20);
         year.setLocation(320, 300);
         addComponentToFrame(editorFrame, year, gbc, 3, 3, 1, 1);

@@ -16,7 +16,7 @@ public class SortTask extends JPanel implements ActionListener {
         setLayout(new BorderLayout());
 
         JLabel label = new JLabel("Sort Tasks", SwingConstants.CENTER);
-        label.setFont(new Font("Arial", Font.BOLD, 20));
+        label.setFont(new Font("Roboto", Font.BOLD, 20));
         this.add(label, BorderLayout.NORTH);
 
         JPanel buttonPanel = new JPanel();

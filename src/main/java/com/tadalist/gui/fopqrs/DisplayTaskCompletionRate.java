@@ -19,12 +19,12 @@ public class DisplayTaskCompletionRate extends JPanel {
 
         // Title
         JLabel titleLabel = new JLabel("Task Completion Rate", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        titleLabel.setFont(new Font("Roboto", Font.BOLD, 18));
         add(titleLabel, BorderLayout.NORTH);
 
         // Completion Label
         completionLabel = new JLabel("Loading...", SwingConstants.CENTER);
-        completionLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        completionLabel.setFont(new Font("Roboto", Font.PLAIN, 16));
 
         // Progress Bar
         completionProgress = new JProgressBar(0, 100);

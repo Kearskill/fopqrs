@@ -26,7 +26,7 @@ public class ManageRecurringTask extends JPanel {
 
         // Create a title label
         JLabel label = new JLabel("Manage Recurring Tasks", SwingConstants.CENTER);
-        label.setFont(new Font("Arial", Font.BOLD, 18));
+        label.setFont(new Font("Roboto", Font.BOLD, 18));
         this.add(label, BorderLayout.NORTH);
 
         // Create a panel to hold the buttons

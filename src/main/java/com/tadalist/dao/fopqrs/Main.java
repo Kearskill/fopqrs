@@ -595,7 +595,7 @@ public class Main {
     private static Connection getConnection() throws SQLException {
         String url = "jdbc:mysql://localhost:3306/realtadalist_db";
         String username = "root";
-        String password = "localroot";
+        String password = "tunafish1610";
         return DriverManager.getConnection(url, username, password);
     }
 }

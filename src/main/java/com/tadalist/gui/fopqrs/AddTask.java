@@ -51,64 +51,66 @@ public class AddTask extends JPanel implements ActionListener {
         startEmailReminderScheduler();
         setLayout(null);
 
+        setBackground(new Color(237, 231, 229));
+
         // Title
         header = new JLabel("Enter Task Details");
-        header.setFont(new Font("Arial", Font.PLAIN, 30));
+        header.setFont(new Font("Roboto", Font.PLAIN, 30));
         header.setSize(300, 30);
         header.setLocation(300, 30);
-        header.setForeground(Color.blue);
+        header.setForeground(new Color(0x060E3C));
         add(header);
 
         // task title
         title = new JLabel("Title");
-        title.setFont(new Font("Arial", Font.PLAIN, 20));
+        title.setFont(new Font("Roboto", Font.PLAIN, 20));
         title.setSize(100, 20);
         title.setLocation(100, 100);
-        title.setForeground(Color.red);
+        title.setForeground(new Color(0x0C1D70));
         add(title);
 
         textFieldTitle = new JTextField();
-        textFieldTitle.setFont(new Font("Arial", Font.PLAIN, 15));
+        textFieldTitle.setFont(new Font("Roboto", Font.PLAIN, 15));
         textFieldTitle.setSize(190, 20);
         textFieldTitle.setLocation(200, 100);
         add(textFieldTitle);
 
         // description
         description = new JLabel("Description");
-        description.setFont(new Font("Arial", Font.PLAIN, 20));
+        description.setFont(new Font("Roboto", Font.PLAIN, 20));
         description.setSize(100, 20);
         description.setLocation(100, 150);
-        description.setForeground(Color.YELLOW);
+        description.setForeground(new Color(0x1637CA));
         add(description);
 
         textFieldDescription = new JTextField();
-        textFieldDescription.setFont(new Font("Arial", Font.PLAIN, 15));
+        textFieldDescription.setFont(new Font("Roboto", Font.PLAIN, 15));
         textFieldDescription.setSize(150, 20);
         textFieldDescription.setLocation(200, 150);
         add(textFieldDescription);
 
         // Due Date
         dueDate = new JLabel("Due Date");
-        dueDate.setFont(new Font("Arial", Font.PLAIN, 20));
+        dueDate.setFont(new Font("Roboto", Font.PLAIN, 20));
         dueDate.setSize(100, 20);
         dueDate.setLocation(100, 300);
-        dueDate.setForeground(Color.MAGENTA);
+        dueDate.setForeground(new Color(0x2349FF));
         add(dueDate);
 
         date = new JComboBox(dates);
-        date.setFont(new Font("Arial", Font.PLAIN, 15));
+        date.setFont(new Font("Roboto", Font.PLAIN, 15));
         date.setSize(50, 20);
         date.setLocation(200, 300);
         add(date);
 
         month = new JComboBox(months);
-        month.setFont(new Font("Arial", Font.PLAIN, 15));
+        month.setFont(new Font("Roboto", Font.PLAIN, 15));
         month.setSize(60, 20);
         month.setLocation(250, 300);
         add(month);
 
         year = new JComboBox(years);
-        year.setFont(new Font("Arial", Font.PLAIN, 15));
+        year.setFont(new Font("Roboto", Font.PLAIN, 15));
         year.setSize(60, 20);
         year.setLocation(320, 300);
         add(year);
@@ -116,28 +118,28 @@ public class AddTask extends JPanel implements ActionListener {
 
         // Priority
         priority = new JLabel("Priority");
-        priority.setFont(new Font("Arial", Font.PLAIN, 20));
+        priority.setFont(new Font("Roboto", Font.PLAIN, 20));
         priority.setSize(100, 20);
         priority.setLocation(100, 200);
-        priority.setForeground(Color.orange);
+        priority.setForeground(new Color(0x4532FF));
         add(priority);
 
         low = new JRadioButton("Low");
-        low.setFont(new Font("Arial", Font.PLAIN, 15));
+        low.setFont(new Font("Roboto", Font.PLAIN, 15));
         low.setSelected(true); // default selected
         low.setSize(75, 20);
         low.setLocation(200, 200);
         add(low);
 
         medium = new JRadioButton("Medium");
-        medium.setFont(new Font("Arial", Font.PLAIN, 15));
+        medium.setFont(new Font("Roboto", Font.PLAIN, 15));
         medium.setSelected(false);
         medium.setSize(80, 20);
         medium.setLocation(275, 200);
         add(medium);
 
         high = new JRadioButton("High");
-        high.setFont(new Font("Arial", Font.PLAIN, 15));
+        high.setFont(new Font("Roboto", Font.PLAIN, 15));
         high.setSelected(false);
         high.setSize(80, 20);
         high.setLocation(355, 200);
@@ -150,28 +152,28 @@ public class AddTask extends JPanel implements ActionListener {
 
         // Category
         category = new JLabel("Category");
-        category.setFont(new Font("Arial", Font.PLAIN, 20));
+        category.setFont(new Font("Roboto", Font.PLAIN, 20));
         category.setSize(100, 20);
         category.setLocation(100, 250);
-        category.setForeground(Color.red);
+        category.setForeground(new Color(0x7B90FF));
         add(category);
 
         homework = new JRadioButton("Homework");
-        homework.setFont(new Font("Arial", Font.PLAIN, 15));
+        homework.setFont(new Font("Roboto", Font.PLAIN, 15));
         homework.setSelected(true);
         homework.setSize(75, 20);
         homework.setLocation(200, 250);
         add(homework);
 
         personal = new JRadioButton("Personal");
-        personal.setFont(new Font("Arial", Font.PLAIN, 15));
+        personal.setFont(new Font("Roboto", Font.PLAIN, 15));
         personal.setSelected(false);
         personal.setSize(80, 20);
         personal.setLocation(275, 250);
         add(personal);
 
         work = new JRadioButton("Work");
-        work.setFont(new Font("Arial", Font.PLAIN, 15));
+        work.setFont(new Font("Roboto", Font.PLAIN, 15));
         work.setSelected(false);
         work.setSize(80, 20);
         work.setLocation(355, 250);
@@ -184,21 +186,21 @@ public class AddTask extends JPanel implements ActionListener {
 
         // Status
         status = new JLabel("Status");
-        status.setFont(new Font("Arial", Font.PLAIN, 20));
+        status.setFont(new Font("Roboto", Font.PLAIN, 20));
         status.setSize(100, 20);
         status.setLocation(100, 350);
-        status.setForeground(Color.GREEN);
+        status.setForeground(new Color(0x4C6AFF));
         add(status);
 
         pending = new JRadioButton("Pending");
-        pending.setFont(new Font("Arial", Font.PLAIN, 15));
+        pending.setFont(new Font("Roboto", Font.PLAIN, 15));
         pending.setSelected(false);
         pending.setSize(75, 20);
         pending.setLocation(200, 350);
         add(pending);
 
         completed = new JRadioButton("Completed");
-        completed.setFont(new Font("Arial", Font.PLAIN, 15));
+        completed.setFont(new Font("Roboto", Font.PLAIN, 15));
         completed.setSelected(true);
         completed.setSize(80, 20);
         completed.setLocation(275, 350);
@@ -210,7 +212,7 @@ public class AddTask extends JPanel implements ActionListener {
 
         // Email where it is initially hidden
         email = new JLabel("Email:");
-        email.setFont(new Font("Arial", Font.PLAIN, 20));
+        email.setFont(new Font("Roboto", Font.PLAIN, 20));
         email.setSize(100, 20);
         email.setLocation(100, 400);
         email.setForeground(Color.BLUE);
@@ -218,7 +220,7 @@ public class AddTask extends JPanel implements ActionListener {
         add(email);
 
         textFieldEmail = new JTextField();
-        textFieldEmail.setFont(new Font("Arial", Font.PLAIN, 15));
+        textFieldEmail.setFont(new Font("Roboto", Font.PLAIN, 15));
         textFieldEmail.setSize(200, 20);
         textFieldEmail.setLocation(200, 400);
         textFieldEmail.setVisible(false); // Hide initially
@@ -240,7 +242,7 @@ public class AddTask extends JPanel implements ActionListener {
 
         // Buttons
         submit = new JButton("Submit");
-        submit.setFont(new Font("Arial", Font.PLAIN, 15));
+        submit.setFont(new Font("Roboto", Font.PLAIN, 15));
         submit.setSize(100, 20);
         submit.setLocation(175, 450);
         submit.addActionListener(this);
@@ -250,7 +252,7 @@ public class AddTask extends JPanel implements ActionListener {
 
         // Output Text Area
         textOut = new JTextArea();
-        textOut.setFont(new Font("Arial", Font.PLAIN, 15));
+        textOut.setFont(new Font("Roboto", Font.PLAIN, 15));
         textOut.setSize(300, 400);
         textOut.setLocation(500, 100);
         textOut.setLineWrap(true);
@@ -258,13 +260,13 @@ public class AddTask extends JPanel implements ActionListener {
         add(textOut);
 
         res = new JLabel("");
-        res.setFont(new Font("Arial", Font.PLAIN, 20));
+        res.setFont(new Font("Roboto", Font.PLAIN, 20));
         res.setSize(500, 25);
         res.setLocation(100, 500);
         add(res);
 
         resadd = new JTextArea();
-        resadd.setFont(new Font("Arial", Font.PLAIN, 15));
+        resadd.setFont(new Font("Roboto", Font.PLAIN, 15));
         resadd.setSize(200, 75);
         resadd.setLocation(580, 175);
         resadd.setLineWrap(true);
