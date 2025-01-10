@@ -13,8 +13,8 @@ public class EmailUtil {
     }
 
     public static void sendEmail(String recipient, String subject, String body) {
-        final String senderEmail = "disclosewastaken@gmail.com";
-        final String senderPassword = "fopqrsburner";
+        final String senderEmail = "ntsyabeatrisya@gmail.com";
+        final String senderPassword = "jlow sbuh dthm zaon";
 
         // SMTP server properties
         Properties properties = new Properties();
