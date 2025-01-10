@@ -274,51 +274,68 @@ public class Main {
         }
     }
 
-    //6 : Sort Task
+    // 6: Sort Task
     private static void sortBy(Scanner scanner) {
         try {
             System.out.println("===== Task Sorting ====");
-            System.out.println("1. Due Date (Ascending to Descending)");
-            System.out.println("2. Due Date (Descending to Ascending)");
+            System.out.println("1. Due Date (Ascending)");
+            System.out.println("2. Due Date (Descending)");
             System.out.println("3. Priority (High to Low)");
             System.out.println("4. Priority (Low to High)");
+            System.out.print("Select an option (1-4): ");
             String userOption = scanner.nextLine();
 
-            //advance switch case
-            boolean ascending = switch (userOption) {
-                case "1" -> true;
-                case "2" -> false;
-                case "3" -> true;
-                case "4" -> false;
-                default -> throw new IllegalArgumentException("Invalid option selected!");
-            };
-            String sortByColumn = switch (userOption) {
-                case "1", "2" -> "DueDate";
-                case "3", "4" -> "Priority";
-                default -> throw new IllegalArgumentException("Invalid option selected!");
-            };
+            boolean ascending;
+            String sortByColumn;
 
+            // Determine sort order and column
+            switch (userOption) {
+                case "1":
+                    sortByColumn = "DueDate";
+                    ascending = true;
+                    break;
+                case "2":
+                    sortByColumn = "DueDate";
+                    ascending = false;
+                    break;
+                case "3":
+                    sortByColumn = "Priority";
+                    ascending = false;
+                    break;
+                case "4":
+                    sortByColumn = "Priority";
+                    ascending = true;
+                    break;
+                default:
+                    System.out.println("Invalid option! Please select a number between 1 and 4.");
+                    return;
+            }
+
+            // Get and display sorted tasks
             System.out.println("Tasks sorted by " + sortByColumn +
                     " (" + (ascending ? "Ascending" : "Descending") + "):");
             List<Tasks> sortedTasks = TaskDAO.getTasksSorted(sortByColumn, ascending);
 
             for (Tasks task : sortedTasks) {
-                System.out.println(task.getTitle() + " - " + userOption + ": "
-                        + getColumnValue(task, userOption));
+                System.out.println(task.getTitle() + " - " +
+                        sortByColumn + ": " + getColumnValue(task, sortByColumn));
             }
         } catch (Exception e) {
+            System.out.println("An error occurred while sorting tasks: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
+    // Helper Method
     private static Object getColumnValue(Tasks task, String sortBy) {
         return switch (sortBy) {
             case "DueDate" -> task.getDueDate();
             case "Priority" -> task.getPriority();
             case "Category" -> task.getCategory();
-            default -> null;
+            default -> "Unknown Column";
         };
     }
+
 
     // Option 7: Search Tasks by Keyword
     private static void searchTasksByKeyword(Scanner scanner) {
@@ -595,7 +612,7 @@ public class Main {
     private static Connection getConnection() throws SQLException {
         String url = "jdbc:mysql://localhost:3306/realtadalist_db";
         String username = "root";
-        String password = "tunafish1610";
+        String password = "localroot";
         return DriverManager.getConnection(url, username, password);
     }
 }
