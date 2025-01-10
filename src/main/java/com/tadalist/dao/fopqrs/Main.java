@@ -33,8 +33,8 @@ public class Main {
             System.out.println("9. Add Task Dependency");
             System.out.println("10. Mark Task As Complete");
             System.out.println("11. Display Task Completion Rate");
-            System.out.println("12. Vector Search for Tasks");
-            System.out.println("13. Exit");
+//            System.out.println("12. Vector Search for Tasks"); SCRAPPED
+            System.out.println("12. Exit");
             System.out.print("Enter your choice: ");
 
             int choice = scanner.nextInt();
@@ -78,11 +78,11 @@ public class Main {
                     //Data analytics - task completion rate
                     displayTaskCompletionRate();
                     break;
+//                case 12: SCRAPPED
+//                    //testing eh vector search
+//                    vectorSearch(scanner);
+//                    break;
                 case 12:
-                    //testing eh vector search
-                    vectorSearch(scanner);
-                    break;
-                case 13:
                     System.out.println("Exiting TaDaList! Goodbye :((((((((((");
                     exit = true;
                     break;
@@ -549,64 +549,64 @@ public class Main {
         }
     }
 
-//option 12: testing vector search
-
-    private static void vectorSearch(Scanner scanner) {
-        try {
-            System.out.println("Enter a query to search for similar tasks:");
-            String query = scanner.nextLine();
-
-            // Fetch all tasks
-            List<Tasks> taskList = TaskDAO.getAllTasks();
-
-            // Vector similarity computation
-            System.out.println("\n===== Vector Search Results =====");
-            for (Tasks task : taskList) {
-                double similarity = calculateCosineSimilarity(query, task.getTitle() + " " + task.getDescription());
-                if (similarity > 0.2) { // Set a threshold for similarity
-                    System.out.printf(
-                            "%d. %s - Similarity: %.2f\n",
-                            task.getTaskId(),
-                            task.getTitle(),
-                            similarity
-                    );
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println("Error fetching tasks for vector search: " + e.getMessage());
-        }
-    }
-
-    private static double calculateCosineSimilarity(String query, String text) {
-        Map<String, Integer> queryVector = tokenizeAndCount(query);
-        Map<String, Integer> textVector = tokenizeAndCount(text);
-
-        double dotProduct = 0.0, queryMagnitude = 0.0, textMagnitude = 0.0;
-        for (String key : queryVector.keySet()) {
-            int queryCount = queryVector.getOrDefault(key, 0);
-            int textCount = textVector.getOrDefault(key, 0);
-            dotProduct += queryCount * textCount;
-            queryMagnitude += Math.pow(queryCount, 2);
-        }
-        for (int count : textVector.values()) {
-            textMagnitude += Math.pow(count, 2);
-        }
-
-        queryMagnitude = Math.sqrt(queryMagnitude);
-        textMagnitude = Math.sqrt(textMagnitude);
-
-        return dotProduct / (queryMagnitude * textMagnitude);
-    }
-
-    private static Map<String, Integer> tokenizeAndCount(String text) {
-        Map<String, Integer> wordCount = new HashMap<>();
-        String[] words = text.toLowerCase().split("\\W+");
-        for (String word : words) {
-            wordCount.put(word, wordCount.getOrDefault(word, 0) + 1);
-        }
-        return wordCount;
-    }
-
+////option 12: testing vector search SCRAPPED
+//
+//    private static void vectorSearch(Scanner scanner) {
+//        try {
+//            System.out.println("Enter a query to search for similar tasks:");
+//            String query = scanner.nextLine();
+//
+//            // Fetch all tasks
+//            List<Tasks> taskList = TaskDAO.getAllTasks();
+//
+//            // Vector similarity computation
+//            System.out.println("\n===== Vector Search Results =====");
+//            for (Tasks task : taskList) {
+//                double similarity = calculateCosineSimilarity(query, task.getTitle() + " " + task.getDescription());
+//                if (similarity > 0.2) { // Set a threshold for similarity
+//                    System.out.printf(
+//                            "%d. %s - Similarity: %.2f\n",
+//                            task.getTaskId(),
+//                            task.getTitle(),
+//                            similarity
+//                    );
+//                }
+//            }
+//        } catch (SQLException e) {
+//            System.out.println("Error fetching tasks for vector search: " + e.getMessage());
+//        }
+//    }
+//
+//    private static double calculateCosineSimilarity(String query, String text) {
+//        Map<String, Integer> queryVector = tokenizeAndCount(query);
+//        Map<String, Integer> textVector = tokenizeAndCount(text);
+//
+//        double dotProduct = 0.0, queryMagnitude = 0.0, textMagnitude = 0.0;
+//        for (String key : queryVector.keySet()) {
+//            int queryCount = queryVector.getOrDefault(key, 0);
+//            int textCount = textVector.getOrDefault(key, 0);
+//            dotProduct += queryCount * textCount;
+//            queryMagnitude += Math.pow(queryCount, 2);
+//        }
+//        for (int count : textVector.values()) {
+//            textMagnitude += Math.pow(count, 2);
+//        }
+//
+//        queryMagnitude = Math.sqrt(queryMagnitude);
+//        textMagnitude = Math.sqrt(textMagnitude);
+//
+//        return dotProduct / (queryMagnitude * textMagnitude);
+//    }
+//
+//    private static Map<String, Integer> tokenizeAndCount(String text) {
+//        Map<String, Integer> wordCount = new HashMap<>();
+//        String[] words = text.toLowerCase().split("\\W+");
+//        for (String word : words) {
+//            wordCount.put(word, wordCount.getOrDefault(word, 0) + 1);
+//        }
+//        return wordCount;
+//    }
+//
 
     // Get connection method for TaskDependencyDAO
     private static Connection getConnection() throws SQLException {

@@ -47,8 +47,7 @@ public class AddTask extends JPanel implements ActionListener {
             "Sept", "Oct", "Nov", "Dec"};
 
     private String years[]
-            = {"2020", "2021", "2022", "2023",
-            "2024", "2025", "2026", "2027",
+            = {"2025", "2026", "2027",
             "2028", "2029", "2030", "2031",
             "2032", "2033", "2034", "2035"};
 
