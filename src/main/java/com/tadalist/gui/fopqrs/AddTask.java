@@ -13,9 +13,14 @@ import java.awt.event.ItemListener;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TimerTask;
+
+import java.awt.FocusTraversalPolicy;
+import java.awt.Component;
+
 
 
 public class AddTask extends JPanel implements ActionListener {
@@ -48,7 +53,7 @@ public class AddTask extends JPanel implements ActionListener {
             "2032", "2033", "2034", "2035"};
 
     public AddTask() {
-//        startEmailReminderScheduler();
+        startEmailReminderScheduler();
         setLayout(null);
 
         setBackground(new Color(237, 231, 229));
@@ -271,6 +276,24 @@ public class AddTask extends JPanel implements ActionListener {
         resadd.setLocation(580, 175);
         resadd.setLineWrap(true);
         add(resadd);
+
+        List<Component> tabOrder = new ArrayList<>();
+        tabOrder.add(textFieldTitle);
+        tabOrder.add(textFieldDescription);
+        tabOrder.add(low);
+        tabOrder.add(medium);
+        tabOrder.add(high);
+        tabOrder.add(homework);
+        tabOrder.add(personal);
+        tabOrder.add(work);
+        tabOrder.add(pending);
+        tabOrder.add(completed);
+        tabOrder.add(date);
+        tabOrder.add(month);
+        tabOrder.add(year);
+        tabOrder.add(submit);
+
+        setFocusTraversalPolicy(new CustomFocusTraversalPolicy(tabOrder));
     }
 
 
@@ -420,5 +443,40 @@ public class AddTask extends JPanel implements ActionListener {
 
         EmailUtil.sendEmail(recipient, subject, body);
         System.out.println("Email reminder sent for task: " + task.getTitle());
+    }
+}
+
+class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
+    private final List<Component> order;
+
+    public CustomFocusTraversalPolicy(List<Component> order) {
+        this.order = order;
+    }
+
+    @Override
+    public Component getComponentAfter(Container focusCycleRoot, Component component) {
+        int idx = order.indexOf(component);
+        return (idx == -1 || idx == order.size() - 1) ? order.get(0) : order.get(idx + 1);
+    }
+
+    @Override
+    public Component getComponentBefore(Container focusCycleRoot, Component component) {
+        int idx = order.indexOf(component);
+        return (idx <= 0) ? order.get(order.size() - 1) : order.get(idx - 1);
+    }
+
+    @Override
+    public Component getFirstComponent(Container focusCycleRoot) {
+        return order.get(0);
+    }
+
+    @Override
+    public Component getLastComponent(Container focusCycleRoot) {
+        return order.get(order.size() - 1);
+    }
+
+    @Override
+    public Component getDefaultComponent(Container focusCycleRoot) {
+        return order.get(0);
     }
 }

@@ -285,7 +285,7 @@ public class ViewAllTask extends JPanel {
 
         // Status Field
         JLabel statusLabel = new JLabel("Status:");
-        JComboBox<String> statusBox = new JComboBox<>(new String[]{"PENDING", "IN PROGRESS", "COMPLETED"});
+        JComboBox<String> statusBox = new JComboBox<>(new String[]{"PENDING",  "COMPLETED"});
         addComponentToFrame(editorFrame, statusLabel, gbc, 0, 5, 1, 1);
         addComponentToFrame(editorFrame, statusBox, gbc, 1, 5, 2, 1);
         statusBox.setSelectedItem(task.status);
