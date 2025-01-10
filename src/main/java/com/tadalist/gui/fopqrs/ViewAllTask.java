@@ -198,8 +198,7 @@ public class ViewAllTask extends JPanel {
         System.out.println("Parsed date: " + Arrays.toString(a));  // debug
 
 
-
-// Ensure month is mapped correctly
+        // Ensure month is mapped correctly
         String monthStr = monthConversionReversed.get(a[1]);
 
         // Setting the year
@@ -292,27 +291,7 @@ public class ViewAllTask extends JPanel {
         addComponentToFrame(editorFrame, statusBox, gbc, 1, 5, 2, 1);
         statusBox.setSelectedItem(task.status);
 
-// Check for dependencies before allowing completion
-        // Check for dependencies before allowing completion
-        if (statusBox.getSelectedItem().equals("COMPLETED")) {
-            try (Connection conn = dbConnection.getConnection());
-                 TaskDependencyDAO dependencyDAO = new TaskDependencyDAO(conn)) {
 
-                List<TaskDependency> dependencies = dependencyDAO.getTaskDependenciesByTaskId(task.id);
-                for (TaskDependency dependency : dependencies) {
-                    int dependentTaskId = dependency.getDependentTaskId();
-                    Tasks dependentTask = TaskDAO.getTaskById(dependentTaskId);
-                    if (dependentTask != null && dependentTask.getStatus().equals(Tasks.Status.PENDING)) {
-                        JOptionPane.showMessageDialog(null, "Cannot mark task as completed because dependent tasks are still pending: " + dependentTaskId, "Dependency Error", JOptionPane.ERROR_MESSAGE);
-                        return; // Prevents saving if dependencies are pending
-                    }
-                }
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Error checking task dependencies.", "Database Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-        }
 
 
 
@@ -333,6 +312,27 @@ public class ViewAllTask extends JPanel {
         // Buttons (Save and Delete)
         JButton saveButton = new JButton("Save");
         saveButton.addActionListener(e -> {
+            // Check for dependencies before allowing completion
+            if (statusBox.getSelectedItem().equals("COMPLETED")) {
+                try (Connection conn = dbConnection.getConnection()){
+                    TaskDependencyDAO dependencyDAO = new TaskDependencyDAO(conn);
+
+                    List<TaskDependency> dependencies = dependencyDAO.getTaskDependenciesByTaskId(task.id);
+                    for (TaskDependency dependency : dependencies) {
+                        int dependentTaskId = dependency.getDependentTaskId();
+                        Tasks dependentTask = TaskDAO.getTaskById(dependentTaskId);
+                        if (dependentTask != null && dependentTask.getStatus().equals(Tasks.Status.PENDING)) {
+                            JOptionPane.showMessageDialog(null, "Cannot mark task as completed because dependent tasks are still pending: " + dependentTaskId, "Dependency Error", JOptionPane.ERROR_MESSAGE);
+                            return; // Prevents saving if dependencies are pending
+                        }
+                    }
+                } catch (SQLException err) {
+                    err.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "Error checking task dependencies.", "Database Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
+
             String daySQL = (String) date.getSelectedItem();
             if (daySQL.length() == 1) {
                 daySQL = "0" + daySQL;  // Ensure it is two digits
@@ -365,7 +365,6 @@ public class ViewAllTask extends JPanel {
                 JOptionPane.showMessageDialog(null, "Invalid date format: " + dueDateSQL, "Error", JOptionPane.ERROR_MESSAGE);
                 err.printStackTrace();
             }
-
         });
 
         JButton deleteButton = new JButton("Delete");
