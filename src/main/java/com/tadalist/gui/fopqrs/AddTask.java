@@ -392,11 +392,15 @@ public class AddTask extends JPanel implements ActionListener {
             Tasks.Priority priority = Tasks.Priority.valueOf(prioritySQL.toUpperCase());
             Tasks.Category category = Tasks.Category.valueOf(categorySQL.toUpperCase());
             Tasks.Status status = Tasks.Status.valueOf(statusSQL.toUpperCase());
+            boolean emailReminder = true;
+            if (emailSQL == null){
+                emailReminder  = false;
+            }
             try {
                 Timestamp now = new Timestamp(System.currentTimeMillis());
 
                 Tasks task = new Tasks(0, titleSQL, descriptionSQL, dueDate, priority, status, now, now, (short) 0,
-                        0, 0, category,emailSQL,true,false);
+                        0, 0, category,emailSQL,emailReminder,false);
                 TaskDAO.addTask(task);
                 res.setText("Tasks Added Successfully with ID: " + task.getTaskId());
             } catch (SQLException | IllegalArgumentException err) {
