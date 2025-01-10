@@ -48,7 +48,7 @@ public class AddTask extends JPanel implements ActionListener {
             "2032", "2033", "2034", "2035"};
 
     public AddTask() {
-        startEmailReminderScheduler();
+//        startEmailReminderScheduler();
         setLayout(null);
 
         setBackground(new Color(237, 231, 229));
@@ -316,7 +316,9 @@ public class AddTask extends JPanel implements ActionListener {
             }
 
             if (pending.isSelected()){
-                emailSQL = textFieldEmail.getText();
+                if (!textFieldEmail.getText().equals("")){
+                    emailSQL = textFieldEmail.getText();
+                }
                 data3 = "Status : PENDING" + "\nEmail:" + emailSQL +"\n" ;
                 statusSQL = "PENDING";
             }
@@ -355,6 +357,8 @@ public class AddTask extends JPanel implements ActionListener {
             String dateSQL = "";
             if(date.getSelectedItem().toString().length()==1){
                 dateSQL = "0" + date.getSelectedItem().toString();
+            } else {
+                dateSQL = date.getSelectedItem().toString();
             }
 
 
@@ -362,6 +366,7 @@ public class AddTask extends JPanel implements ActionListener {
             String descriptionSQL = textFieldDescription.getText();
             String dueDateSQL = year.getSelectedItem() + "-" + monthConversion.get(month.getSelectedItem()) + "-" + dateSQL;
             Date dueDate = Date.valueOf(dueDateSQL);
+            System.out.println(dueDate);
             Tasks.Priority priority = Tasks.Priority.valueOf(prioritySQL.toUpperCase());
             Tasks.Category category = Tasks.Category.valueOf(categorySQL.toUpperCase());
             Tasks.Status status = Tasks.Status.valueOf(statusSQL.toUpperCase());
