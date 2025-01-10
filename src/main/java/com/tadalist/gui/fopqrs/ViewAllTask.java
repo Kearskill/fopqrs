@@ -31,8 +31,7 @@ public class ViewAllTask extends JPanel {
             "Sept", "Oct", "Nov", "Dec"};
 
     private String years[]
-            = {"2020", "2021", "2022", "2023",
-            "2024", "2025", "2026", "2027",
+            = {"2025", "2026", "2027",
             "2028", "2029", "2030", "2031",
             "2032", "2033", "2034", "2035"};
 
@@ -288,7 +287,7 @@ public class ViewAllTask extends JPanel {
 
         // Status Field
         JLabel statusLabel = new JLabel("Status:");
-        JComboBox<String> statusBox = new JComboBox<>(new String[]{"PENDING", "IN PROGRESS", "COMPLETED"});
+        JComboBox<String> statusBox = new JComboBox<>(new String[]{"PENDING",  "COMPLETED"});
         addComponentToFrame(editorFrame, statusLabel, gbc, 0, 5, 1, 1);
         addComponentToFrame(editorFrame, statusBox, gbc, 1, 5, 2, 1);
         statusBox.setSelectedItem(task.status);

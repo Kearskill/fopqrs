@@ -33,8 +33,8 @@ public class Main {
             System.out.println("9. Add Task Dependency");
             System.out.println("10. Mark Task As Complete");
             System.out.println("11. Display Task Completion Rate");
-            System.out.println("12. Vector Search for Tasks");
-            System.out.println("13. Exit");
+//            System.out.println("12. Vector Search for Tasks"); SCRAPPED
+            System.out.println("12. Exit");
             System.out.print("Enter your choice: ");
 
             int choice = scanner.nextInt();
@@ -78,11 +78,11 @@ public class Main {
                     //Data analytics - task completion rate
                     displayTaskCompletionRate();
                     break;
+//                case 12: SCRAPPED
+//                    //testing eh vector search
+//                    vectorSearch(scanner);
+//                    break;
                 case 12:
-                    //testing eh vector search
-                    vectorSearch(scanner);
-                    break;
-                case 13:
                     System.out.println("Exiting TaDaList! Goodbye :((((((((((");
                     exit = true;
                     break;
@@ -274,51 +274,68 @@ public class Main {
         }
     }
 
-    //6 : Sort Task
+    // 6: Sort Task
     private static void sortBy(Scanner scanner) {
         try {
             System.out.println("===== Task Sorting ====");
-            System.out.println("1. Due Date (Ascending to Descending)");
-            System.out.println("2. Due Date (Descending to Ascending)");
+            System.out.println("1. Due Date (Ascending)");
+            System.out.println("2. Due Date (Descending)");
             System.out.println("3. Priority (High to Low)");
             System.out.println("4. Priority (Low to High)");
+            System.out.print("Select an option (1-4): ");
             String userOption = scanner.nextLine();
 
-            //advance switch case
-            boolean ascending = switch (userOption) {
-                case "1" -> true;
-                case "2" -> false;
-                case "3" -> true;
-                case "4" -> false;
-                default -> throw new IllegalArgumentException("Invalid option selected!");
-            };
-            String sortByColumn = switch (userOption) {
-                case "1", "2" -> "DueDate";
-                case "3", "4" -> "Priority";
-                default -> throw new IllegalArgumentException("Invalid option selected!");
-            };
+            boolean ascending;
+            String sortByColumn;
 
+            // Determine sort order and column
+            switch (userOption) {
+                case "1":
+                    sortByColumn = "DueDate";
+                    ascending = true;
+                    break;
+                case "2":
+                    sortByColumn = "DueDate";
+                    ascending = false;
+                    break;
+                case "3":
+                    sortByColumn = "Priority";
+                    ascending = false;
+                    break;
+                case "4":
+                    sortByColumn = "Priority";
+                    ascending = true;
+                    break;
+                default:
+                    System.out.println("Invalid option! Please select a number between 1 and 4.");
+                    return;
+            }
+
+            // Get and display sorted tasks
             System.out.println("Tasks sorted by " + sortByColumn +
                     " (" + (ascending ? "Ascending" : "Descending") + "):");
             List<Tasks> sortedTasks = TaskDAO.getTasksSorted(sortByColumn, ascending);
 
             for (Tasks task : sortedTasks) {
-                System.out.println(task.getTitle() + " - " + userOption + ": "
-                        + getColumnValue(task, userOption));
+                System.out.println(task.getTitle() + " - " +
+                        sortByColumn + ": " + getColumnValue(task, sortByColumn));
             }
         } catch (Exception e) {
+            System.out.println("An error occurred while sorting tasks: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
+    // Helper Method
     private static Object getColumnValue(Tasks task, String sortBy) {
         return switch (sortBy) {
             case "DueDate" -> task.getDueDate();
             case "Priority" -> task.getPriority();
             case "Category" -> task.getCategory();
-            default -> null;
+            default -> "Unknown Column";
         };
     }
+
 
     // Option 7: Search Tasks by Keyword
     private static void searchTasksByKeyword(Scanner scanner) {
@@ -532,70 +549,70 @@ public class Main {
         }
     }
 
-//option 12: testing vector search
-
-    private static void vectorSearch(Scanner scanner) {
-        try {
-            System.out.println("Enter a query to search for similar tasks:");
-            String query = scanner.nextLine();
-
-            // Fetch all tasks
-            List<Tasks> taskList = TaskDAO.getAllTasks();
-
-            // Vector similarity computation
-            System.out.println("\n===== Vector Search Results =====");
-            for (Tasks task : taskList) {
-                double similarity = calculateCosineSimilarity(query, task.getTitle() + " " + task.getDescription());
-                if (similarity > 0.2) { // Set a threshold for similarity
-                    System.out.printf(
-                            "%d. %s - Similarity: %.2f\n",
-                            task.getTaskId(),
-                            task.getTitle(),
-                            similarity
-                    );
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println("Error fetching tasks for vector search: " + e.getMessage());
-        }
-    }
-
-    private static double calculateCosineSimilarity(String query, String text) {
-        Map<String, Integer> queryVector = tokenizeAndCount(query);
-        Map<String, Integer> textVector = tokenizeAndCount(text);
-
-        double dotProduct = 0.0, queryMagnitude = 0.0, textMagnitude = 0.0;
-        for (String key : queryVector.keySet()) {
-            int queryCount = queryVector.getOrDefault(key, 0);
-            int textCount = textVector.getOrDefault(key, 0);
-            dotProduct += queryCount * textCount;
-            queryMagnitude += Math.pow(queryCount, 2);
-        }
-        for (int count : textVector.values()) {
-            textMagnitude += Math.pow(count, 2);
-        }
-
-        queryMagnitude = Math.sqrt(queryMagnitude);
-        textMagnitude = Math.sqrt(textMagnitude);
-
-        return dotProduct / (queryMagnitude * textMagnitude);
-    }
-
-    private static Map<String, Integer> tokenizeAndCount(String text) {
-        Map<String, Integer> wordCount = new HashMap<>();
-        String[] words = text.toLowerCase().split("\\W+");
-        for (String word : words) {
-            wordCount.put(word, wordCount.getOrDefault(word, 0) + 1);
-        }
-        return wordCount;
-    }
-
+////option 12: testing vector search SCRAPPED
+//
+//    private static void vectorSearch(Scanner scanner) {
+//        try {
+//            System.out.println("Enter a query to search for similar tasks:");
+//            String query = scanner.nextLine();
+//
+//            // Fetch all tasks
+//            List<Tasks> taskList = TaskDAO.getAllTasks();
+//
+//            // Vector similarity computation
+//            System.out.println("\n===== Vector Search Results =====");
+//            for (Tasks task : taskList) {
+//                double similarity = calculateCosineSimilarity(query, task.getTitle() + " " + task.getDescription());
+//                if (similarity > 0.2) { // Set a threshold for similarity
+//                    System.out.printf(
+//                            "%d. %s - Similarity: %.2f\n",
+//                            task.getTaskId(),
+//                            task.getTitle(),
+//                            similarity
+//                    );
+//                }
+//            }
+//        } catch (SQLException e) {
+//            System.out.println("Error fetching tasks for vector search: " + e.getMessage());
+//        }
+//    }
+//
+//    private static double calculateCosineSimilarity(String query, String text) {
+//        Map<String, Integer> queryVector = tokenizeAndCount(query);
+//        Map<String, Integer> textVector = tokenizeAndCount(text);
+//
+//        double dotProduct = 0.0, queryMagnitude = 0.0, textMagnitude = 0.0;
+//        for (String key : queryVector.keySet()) {
+//            int queryCount = queryVector.getOrDefault(key, 0);
+//            int textCount = textVector.getOrDefault(key, 0);
+//            dotProduct += queryCount * textCount;
+//            queryMagnitude += Math.pow(queryCount, 2);
+//        }
+//        for (int count : textVector.values()) {
+//            textMagnitude += Math.pow(count, 2);
+//        }
+//
+//        queryMagnitude = Math.sqrt(queryMagnitude);
+//        textMagnitude = Math.sqrt(textMagnitude);
+//
+//        return dotProduct / (queryMagnitude * textMagnitude);
+//    }
+//
+//    private static Map<String, Integer> tokenizeAndCount(String text) {
+//        Map<String, Integer> wordCount = new HashMap<>();
+//        String[] words = text.toLowerCase().split("\\W+");
+//        for (String word : words) {
+//            wordCount.put(word, wordCount.getOrDefault(word, 0) + 1);
+//        }
+//        return wordCount;
+//    }
+//
 
     // Get connection method for TaskDependencyDAO
     private static Connection getConnection() throws SQLException {
         String url = "jdbc:mysql://localhost:3306/realtadalist_db";
         String username = "root";
-        String password = "tunafish1610";
+        String password = "localroot";
         return DriverManager.getConnection(url, username, password);
     }
 }
